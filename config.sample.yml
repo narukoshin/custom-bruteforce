@@ -4,9 +4,16 @@ site:
 
 bruteforce:
   field: password
+
+  # method #1
   type: list
   list:
    - example password
+   - example password 2
+
+  # method #2
+  type: file
+  source: ./test
 
 headers:
   - name: User-Agent
