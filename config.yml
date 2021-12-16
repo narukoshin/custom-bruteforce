@@ -1,35 +1,22 @@
-site: # Done
-  host: https://www.narukoshin.me
+site:
+  host: https://www.narukoshin.me/login
   method: POST
 
-# there we will add some const fields that will not be changed
-fields: # Done
-  - key: username
-    value: santa
-    
-  - key: submit
-    value: Login
+bruteforce:
+  field: password
+  type: list
+  list:
+   - example password
 
-bruteforce: # done
-  type: file # file | list
-  source: /mnt/d/Dev/rockyou.txt # the path to the dictionary
-  field: password # the field that we will bruteforce
-
-  # method #2
-  # type: list
-  # list:
-  #   - password1
-  #   - password2
-  #   - password3
-  #   - password4
-
-on_fail: 
-  # if the password is wrong, this error message will be available in the web
-  # or, also we can search for the some interesting html tags that are only in the login page
-  message: Incorrect password
-  content_length: 5151 # every website has a different content size
-
-# Setting some headers that can be useful
-headers: # done
+headers:
   - name: User-Agent
-    value: Mozilla/5.0 (Windows NT 10.0; WOW64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4689.40 Safari/537.36
+    value: "Mozilla/5.0 (Macintosh; Intel Mac OS)"
+  - name: Content-Type
+    value: "application/x-www-form-urlencoded; charset=UTF-8"
+
+fields:
+  - name: username
+    value: admin
+
+on_fail:
+  message: Invalid username

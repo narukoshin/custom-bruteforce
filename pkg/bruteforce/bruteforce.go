@@ -2,6 +2,7 @@ package bruteforce
 
 import (
 	"custom-bruteforce/pkg/config"
+	"custom-bruteforce/pkg/structs"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -16,6 +17,7 @@ var (
 	Type  	string 		= config.YAMLConfig.B.Type
 	Source	string 		= config.YAMLConfig.B.Source
 	List	[]string	= config.YAMLConfig.B.List
+	Fail	structs.YAMLOn_fail = config.YAMLConfig.OF
 )
 
 func Dictionary() []string {

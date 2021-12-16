@@ -25,6 +25,14 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// checking if the file is not empty
+	if len(yml) == 0 {
+		fmt.Println("The YAML file is empty")
+		os.Exit(0)
+	}
 	// writing YML file contents in the struct
-	yaml.Unmarshal(yml, &YAMLConfig)
+	err = yaml.Unmarshal(yml, &YAMLConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

@@ -1,7 +1,7 @@
 package structs
 
 type YAMLFields struct {
-	Key string `yaml:"key"`
+	Name string `yaml:"name"`
 	Value string `yaml:"value"`
 }
 
