@@ -1,38 +1,51 @@
 package config
 
 import (
-	"io/ioutil"
-	"log"
-	"fmt"
-	"os"
-	
-	"gopkg.in/yaml.v3"
 	"custom-bruteforce/pkg/structs"
+	"gopkg.in/yaml.v3"
+	"io/ioutil"
+	"errors"
+	"os"
 )
 
 const YAMLFile string = "config.yml"
 
 var YAMLConfig structs.YAMLConfig
 
+var CError error = nil
+
+// Error message if the config file is not found
+var ErrConfigNotFound = errors.New("config file not found, please create it to use this tool")
+
+// Error message if the config file is empty
+var ErrConfigIsEmpty = errors.New("config file is empty")
+
 func init() {
-	// checking if the YAML file is created
+	// Checking if the config file exists
 	if _, err := os.Stat(YAMLFile); err != nil {
-		fmt.Printf("Please create %v file\n", YAMLFile)
+		CError = ErrConfigNotFound
 		return
 	}
-	// reading the YAML file contents
+	// Reading config file
 	yml, err := ioutil.ReadFile(YAMLFile)
 	if err != nil {
-		log.Fatal(err)
+		CError = err
+		return
 	}
-	// checking if the file is not empty
+	// Checking if the config file is not empty
 	if len(yml) == 0 {
-		fmt.Println("The YAML file is empty")
-		os.Exit(0)
+		CError = ErrConfigIsEmpty
+		return
 	}
 	// writing YML file contents in the struct
 	err = yaml.Unmarshal(yml, &YAMLConfig)
 	if err != nil {
-		log.Fatal(err)
+		CError = err
+		return
 	}
+}
+
+// Checking for errors in the app.Run function
+func HasError() error {
+	return CError
 }
