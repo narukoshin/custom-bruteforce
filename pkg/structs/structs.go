@@ -6,8 +6,8 @@ type YAMLFields struct {
 }
 
 type YAMLBruteforce struct {
-	Type string `yaml:"type"`
-	Source string `yaml:"source"`
+	From string `yaml:"from"`
+	File string `yaml:"file"`
 	List []string `yaml:"list"`
 	Field string `yaml:"field"`
 }
