@@ -4,6 +4,7 @@ import (
 	"custom-bruteforce/pkg/config"
 	"custom-bruteforce/pkg/structs"
 	"errors"
+	"net/url"
 	"strings"
 )
 
@@ -27,4 +28,10 @@ func Verify_Method() error {
 		}
 	}
 	return ErrInvalidMethod
+}
+
+// Verifying if the host of target is specified correctly
+func Verify_Host() error {
+	_, err := url.ParseRequestURI(Host)
+	return err
 }
