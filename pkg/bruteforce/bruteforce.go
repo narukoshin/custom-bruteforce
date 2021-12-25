@@ -4,7 +4,6 @@ import (
 	"custom-bruteforce/pkg/config"
 	"custom-bruteforce/pkg/structs"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"strings"
 )
@@ -23,6 +22,7 @@ var (
 var ErrNoPasswords = errors.New("there is no passwords available for bruteforce, please specify some passwords")
 var ErrOpeningFIle = errors.New("we have issues with opening a file, make sure that file exists and is readable")
 var ErrWrongType   = errors.New("you specified the wrong source of dictionary, allowed types are (file, list)")
+var ErrEmptyField  = errors.New("the field that you want to bruteforce is empty")
 
 func verify_type() bool{
 	for _, t := range Types_Available {
@@ -72,8 +72,11 @@ func Start() error {
 	if err != nil {
 		return err
 	}
-	for _, password := range wordlist {
-		fmt.Println(password)
+	// making sure that user specified the field that he wants to bruteforce
+	if len(Field) == 0 {
+		return ErrEmptyField
 	}
+	_ = wordlist
+	// Threading coming soon....
 	return nil
 }
