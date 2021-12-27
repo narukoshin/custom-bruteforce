@@ -10,6 +10,7 @@ type YAMLBruteforce struct {
 	File string `yaml:"file"`
 	List []string `yaml:"list"`
 	Field string `yaml:"field"`
+	Threads int `yaml:"threads"`
 }
 
 type YAMLSite struct {

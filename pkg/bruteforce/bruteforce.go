@@ -16,6 +16,7 @@ var (
 	File	string 		= config.YAMLConfig.B.File
 	List	[]string	= config.YAMLConfig.B.List
 	Fail	structs.YAMLOn_fail = config.YAMLConfig.OF
+	Threads int			= config.YAMLConfig.B.Threads
 )
 
 // adding some error messages
