@@ -1,29 +1,31 @@
-site:
-  host: https://www.narukoshin.me/login
-  method: POST
+site: # required
+  host: https://www.narukoshin.me/login # required
+  method: POST # required
 
-bruteforce:
-  field: password
+bruteforce: # required
+  field: password # required
 
   # method #1
-  type: list
+  from: list
   list:
    - example password
    - example password 2
 
   # method #2
-  type: file
-  source: ./test
+  from: file
+  file: ./test
 
-headers:
+  threads: 20 # optional
+
+headers: # optional
   - name: User-Agent
     value: "Mozilla/5.0 (Macintosh; Intel Mac OS)"
   - name: Content-Type
     value: "application/x-www-form-urlencoded; charset=UTF-8"
 
-fields:
+fields: # optional
   - name: username
     value: admin
 
-on_fail:
+on_fail: # required
   message: Invalid username
