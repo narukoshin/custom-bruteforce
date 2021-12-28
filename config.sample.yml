@@ -15,7 +15,7 @@ bruteforce: # required
   from: file
   file: ./test
 
-  threads: 20 # optional
+  threads: 20 # optional | default: 5
 
 headers: # optional
   - name: User-Agent
