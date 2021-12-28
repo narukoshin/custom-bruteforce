@@ -4,6 +4,7 @@ import (
 	"custom-bruteforce/pkg/config"
 	"custom-bruteforce/pkg/structs"
 	"errors"
+	"fmt"
 	"net"
 	"net/url"
 	"strings"
@@ -32,12 +33,22 @@ func Verify_Method() error {
 	return ErrInvalidMethod
 }
 
-// Verifying if the host of target is specified correctly
+// Verifying if the host of target is specified correctly and the host is alive
 func Verify_Host() error {
-	if _, err := url.ParseRequestURI(Host); err != nil {
+	// checking if the host is set correctly with the scheme
+	url, err := url.ParseRequestURI(Host)
+	if err != nil {
 		return err
 	}
-	if _, err := net.Dial("tcp", Host); err != nil {
+	// getting the host port from the scheme that is specified in the config
+	port := func() (port int) {
+		if url.Scheme == "https" {
+			return 443
+		}
+		return 80
+	}
+	// checking if the host is alive
+	if _, err = net.Dial("tcp", fmt.Sprintf("%v:%v", url.Host, port())); err != nil {
 		return ErrDeadHost
 	}
 	return nil
