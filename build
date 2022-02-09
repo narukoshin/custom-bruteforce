@@ -1,0 +1,9 @@
+#!/bin/bash
+
+bin_folder="./bin"
+
+echo "* Started compiling binaries"
+GOOS=windows go build -o ${bin_folder}/windows.exe main.go
+GOOS=darwin go build -o ${bin_folder}/darwin main.go
+go build -o ${bin_folder}/linux main.go
+echo "* Binaries successfuly compiled in the ${bin_folder} folder"
