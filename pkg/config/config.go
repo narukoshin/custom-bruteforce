@@ -12,6 +12,7 @@ const YAMLFile string = "config.yml"
 
 var YAMLConfig structs.YAMLConfig
 
+// Handling errors
 var CError error = nil
 
 // Error message if the config file is not found
