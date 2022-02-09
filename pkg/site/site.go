@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/url"
 	"strings"
+	"time"
 )
 
 var (
@@ -48,7 +49,7 @@ func Verify_Host() error {
 		return 80
 	}
 	// checking if the host is alive
-	if _, err = net.Dial("tcp", fmt.Sprintf("%v:%v", url.Host, port())); err != nil {
+	if _, err = net.DialTimeout("tcp", fmt.Sprintf("%s:%d", url.Host, port()), 3 * time.Second); err != nil {
 		return ErrDeadHost
 	}
 	return nil

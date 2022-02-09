@@ -26,9 +26,16 @@ var (
 	Threads int			= config.YAMLConfig.B.Threads
 )
 
+// some status messages
+var (
+	StatusFinished string = "finished"
+	StatusFound	string = "found"
+)
+
 type Attack_Result struct {
-	Status		bool
+	Status		string
 	Password	string
+	Stop 		bool
 }
 var Attack Attack_Result
 
@@ -150,7 +157,7 @@ func Start() error {
 					fmt.Printf("error: %v\n", err)
 				}
 				// TODO: Handle error message from the attack function
-				if Attack.Status {
+				if Attack.Stop {
 					// deleting the wordlist to stop the threads
 					wordlist = [][]string{}
 					return
@@ -159,13 +166,14 @@ func Start() error {
 		}(w)
 	}
 	wg.Wait()
+	// When the script stopped working, this will be printed out
 	_attack_finished()
 	return nil
 }
 
 // launching the thread brute-force attack
 func _run_attack(pass string) error {
-	if !Attack.Status {
+	if !Attack.Stop {
 		client := http.Client{}
 		jar, err := cookiejar.New(nil)
 		if err != nil {
@@ -201,7 +209,7 @@ func _run_attack(pass string) error {
 				return err
 			}
 			if !strings.Contains(string(body), Fail.Message) {
-				Attack = Attack_Result {Status: true, Password: pass}
+				Attack = Attack_Result {Status: StatusFound, Password: pass, Stop: true}
 				return nil
 			}
 			fmt.Printf("\033[34m[~] trying password: %v\033[0m\n", pass)
@@ -211,7 +219,10 @@ func _run_attack(pass string) error {
 }
 
 func _attack_finished(){
-	if Attack.Status && Attack.Password != "" {
+	// checking if the attack is stopped and the password is found
+	if Attack.Stop && Attack.Status == StatusFound  && Attack.Password != "" {
 		fmt.Printf("\033[32m[~] the thing that you were looking for is found: %v\033[0m\n", Attack.Password)
+		return
 	}
+	fmt.Printf("\033[33m[~] Well, looks that we can't find a thing that you need, sorry. :/\033[0m\n")
 }
