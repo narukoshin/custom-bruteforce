@@ -26,6 +26,7 @@ var (
 	Fail	structs.YAMLOn_fail = config.YAMLConfig.OF
 	Pass	structs.YAMLOn_pass = config.YAMLConfig.OP
 	Threads int			= config.YAMLConfig.B.Threads
+	NoVerbose bool		= config.YAMLConfig.B.NoVerbose
 )
 
 // some status messages
@@ -38,6 +39,7 @@ type Attack_Result struct {
 	Status		string
 	Password	string
 	Stop 		bool
+	ErrorMessage string `default:"test"`
 }
 var Attack Attack_Result
 
@@ -227,7 +229,8 @@ func _run_attack(pass string) error {
 			}
 			_while_running(pass)
 		} else {
-			fmt.Println(resp.StatusCode)
+			Attack = Attack_Result {Status: StatusFinished, Stop: true, ErrorMessage: "The server says 404"}
+			return nil
 		}
 	}
 	return nil
@@ -235,7 +238,9 @@ func _run_attack(pass string) error {
 
 // message that will be printed while the script is running
 func _while_running(pass string){
-	fmt.Printf("\033[34m[~] trying password: %v\033[0m\n", pass)
+	if !NoVerbose {
+		fmt.Printf("\033[34m[~] trying password: %v\033[0m\n", pass)
+	}
 }
 
 // message that will be printed out when the script is finished
@@ -246,4 +251,8 @@ func _attack_finished(){
 		return
 	}
 	fmt.Printf("\033[33m[~] Well, looks that we can't find a thing that you need, sorry. :/\033[0m\n")
+	if len(Attack.ErrorMessage) != 0 {
+		fmt.Printf("\033[33m[~] Error: %s\033[0m\n", Attack.ErrorMessage)
+		return
+	}
 }
