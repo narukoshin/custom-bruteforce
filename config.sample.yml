@@ -21,6 +21,9 @@ bruteforce: # required
   # This option turns off "trying password" messages
   no_verbose: false # optional
   
+  # this option will save the password in the file
+  output: /home/naru/my_target/password.txt
+  
   threads: 20 # optional | default: 5
 
 headers: # optional
