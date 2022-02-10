@@ -13,9 +13,10 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+	"runtime"
 )
 
-var Types_Available []string = []string{"list", "file"}
+var Types_Available []string = []string{"list", "file", "stdin"}
 
 var (
 	Field 	string 		= config.YAMLConfig.B.Field
@@ -41,10 +42,11 @@ var Attack Attack_Result
 
 // adding some error messages
 var ErrNoPasswords 		= errors.New("there is no passwords available for bruteforce, please specify some passwords")
-var ErrOpeningFIle 		= errors.New("we have issues with opening a file, make sure that file exists and is readable")
+var ErrOpeningFile 		= errors.New("we have issues with opening a file, make sure that file exists and is readable")
 var ErrWrongType   		= errors.New("you specified the wrong source of dictionary, allowed types are (file, list)")
 var ErrEmptyField  		= errors.New("the field that you want to bruteforce is empty")
 var ErrTooMuchThreads	= errors.New("too much threads for such small wordlist, please decrease amount of threads") 
+var ErrUnixRequired     = errors.New("you can not use this feature on Windows, you can use WSL instead")
 
 // verifying if the list type is correct, currently there is only two types available - file and list
 func verify_type() bool{
@@ -63,14 +65,24 @@ func Dictionary() ([][]string, error) {
 	if ok := verify_type(); !ok {
 		return nil, ErrWrongType
 	}
-	if From == "list" {
-		wordlist = List
-	} else if From == "file" {
-		contents, err := ioutil.ReadFile(File)
-		if err != nil {
-			return nil, ErrOpeningFIle
-		}
-		wordlist = strings.Split(string(contents), "\n")
+	switch(From){
+		case "list":
+			wordlist = List
+		case "file":
+			contents, err := ioutil.ReadFile(File)
+			if err != nil {
+				return nil, ErrOpeningFile
+			}
+			wordlist = strings.Split(string(contents), "\n")
+		case "stdin":
+			if runtime.GOOS == "windows" {
+				return nil, ErrUnixRequired
+			}
+			contents, err := ioutil.ReadFile("/dev/stdin")
+			if err != nil {
+			  return nil, ErrOpeningFile
+			}
+			wordlist = strings.Split(string(contents), "\n")
 	}
 	// Checking if the last element of the list is not empty
 	// If the last element is empty, then we are deleting it 
@@ -212,12 +224,20 @@ func _run_attack(pass string) error {
 				Attack = Attack_Result {Status: StatusFound, Password: pass, Stop: true}
 				return nil
 			}
-			fmt.Printf("\033[34m[~] trying password: %v\033[0m\n", pass)
+			_while_running(pass)
+		} else {
+			fmt.Println(resp.StatusCode)
 		}
 	}
 	return nil
 }
 
+// message that will be printed while the script is running
+func _while_running(pass string){
+	fmt.Printf("\033[34m[~] trying password: %v\033[0m\n", pass)
+}
+
+// message that will be printed out when the script is finished
 func _attack_finished(){
 	// checking if the attack is stopped and the password is found
 	if Attack.Stop && Attack.Status == StatusFound  && Attack.Password != "" {
