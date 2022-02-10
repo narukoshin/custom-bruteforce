@@ -12,6 +12,7 @@ type YAMLBruteforce struct {
 	Field string `yaml:"field"`
 	Threads int `yaml:"threads"`
 	NoVerbose bool `yaml:"no_verbose"`
+	Output	string	`yaml:"output"`
 }
 
 type YAMLSite struct {

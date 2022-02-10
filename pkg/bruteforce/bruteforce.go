@@ -27,6 +27,7 @@ var (
 	Pass	structs.YAMLOn_pass = config.YAMLConfig.OP
 	Threads int			= config.YAMLConfig.B.Threads
 	NoVerbose bool		= config.YAMLConfig.B.NoVerbose
+	Output	string		= config.YAMLConfig.B.Output
 )
 
 // some status messages
@@ -248,11 +249,22 @@ func _attack_finished(){
 	// checking if the attack is stopped and the password is found
 	if Attack.Stop && Attack.Status == StatusFound  && Attack.Password != "" {
 		fmt.Printf("\033[32m[~] the thing that you were looking for is found: %v\033[0m\n", Attack.Password)
+		// there we will save the password
+		WritePasswordToFile()
 		return
 	}
 	fmt.Printf("\033[33m[~] Well, looks that we can't find a thing that you need, sorry. :/\033[0m\n")
 	if len(Attack.ErrorMessage) != 0 {
 		fmt.Printf("\033[33m[~] Error: %s\033[0m\n", Attack.ErrorMessage)
 		return
+	}
+}
+
+// Saving the password in the file
+func WritePasswordToFile(){
+	// checking if the "output" option is added
+	if len(Output) != 0 {
+		// writting password to the file
+		ioutil.WriteFile(Output, []byte(Attack.Password), 0644)
 	}
 }
