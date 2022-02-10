@@ -24,6 +24,7 @@ var (
 	File	string 		= config.YAMLConfig.B.File
 	List	[]string	= config.YAMLConfig.B.List
 	Fail	structs.YAMLOn_fail = config.YAMLConfig.OF
+	Pass	structs.YAMLOn_pass = config.YAMLConfig.OP
 	Threads int			= config.YAMLConfig.B.Threads
 )
 
@@ -220,7 +221,7 @@ func _run_attack(pass string) error {
 			if err != nil {
 				return err
 			}
-			if !strings.Contains(string(body), Fail.Message) {
+			if (len(Fail.Message) != 0 && !strings.Contains(string(body), Fail.Message)) || (len(Pass.Message) != 0 && strings.Contains(string(body), Pass.Message)) {
 				Attack = Attack_Result {Status: StatusFound, Password: pass, Stop: true}
 				return nil
 			}

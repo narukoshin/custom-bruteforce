@@ -22,11 +22,17 @@ type YAMLConfig struct {
 	F []YAMLFields `yaml:"fields"`
 	B YAMLBruteforce `yaml:"bruteforce"`
 	OF YAMLOn_fail `yaml:"on_fail"`
+	OP YAMLOn_pass `yaml:"on_pass"`
 	H []YAMLHeaders `yaml:"headers"`
 	S YAMLSite `yaml:"site"`
 }
 
 type YAMLOn_fail struct {
+	Message string `yaml:"message"`
+	Length int `yaml:"content_length"`
+}
+
+type YAMLOn_pass struct {
 	Message string `yaml:"message"`
 	Length int `yaml:"content_length"`
 }
