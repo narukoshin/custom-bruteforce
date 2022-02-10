@@ -13,7 +13,7 @@ bruteforce: # required
 
   # method #2
   from: file
-  file: ./test
+  file: /usr/share/wordlists/rockyou.txt
   
   # method 3
   from: stdin
