@@ -1,9 +1,27 @@
 #!/bin/bash
 
+version=$1
+release_type=$2
+
+if [ "${#version}" -eq 0 ];then
+    echo -e "Please specify version of the build\nExample: ./build v1.0 ー will compile and archive to v1.0-release.tar.gz"
+    exit
+fi
+
+if [ "${#release_type}" -eq 0 ]; then
+    release_type="release"
+fi
+
 bin_folder="./bin"
+release_folder="./release"
 
 echo "* Started compiling binaries"
 GOOS=windows go build -o ${bin_folder}/windows.exe main.go
 GOOS=darwin go build -o ${bin_folder}/darwin main.go
 go build -o ${bin_folder}/linux main.go
 echo "* Binaries successfuly compiled in the ${bin_folder} folder"
+
+archive_name="${version}-${release_type}.tar.gz"
+
+echo "* Adding binaries to the archive ${release_folder}/${archive_name}"
+tar -zcvf ${release_folder}/${archive_name} ${bin_folder} > /dev/null
