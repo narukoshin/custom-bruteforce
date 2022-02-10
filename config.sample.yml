@@ -13,8 +13,14 @@ bruteforce: # required
 
   # method #2
   from: file
-  file: ./test
-
+  file: /usr/share/wordlists/rockyou.txt
+  
+  # method 3
+  from: stdin
+  
+  # This option turns off "trying password" messages
+  no_verbose: false # optional
+  
   threads: 20 # optional | default: 5
 
 headers: # optional
@@ -27,5 +33,8 @@ fields: # optional
   - name: username
     value: admin
 
-on_fail: # required
+on_fail: # required - will be ignored if on_pass is added
   message: Invalid username
+  
+on_pass: # optional
+  message: Welcome
