@@ -41,3 +41,7 @@ on_fail: # required - will be ignored if on_pass is added
   
 on_pass: # optional
   message: Welcome
+  
+crawl: # optional
+  name: field-name
+  search: ([a-z0-9]+){32} # a regex to find the token
