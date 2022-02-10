@@ -221,7 +221,7 @@ func _run_attack(pass string) error {
 			if err != nil {
 				return err
 			}
-			if (len(Fail.Message) != 0 && !strings.Contains(string(body), Fail.Message)) || (len(Pass.Message) != 0 && strings.Contains(string(body), Pass.Message)) {
+			if (len(Fail.Message) != 0 && !strings.Contains(string(body), Fail.Message)) && (len(Pass.Message) == 0) || (len(Pass.Message) != 0 && strings.Contains(string(body), Pass.Message)) {
 				Attack = Attack_Result {Status: StatusFound, Password: pass, Stop: true}
 				return nil
 			}
