@@ -20,6 +20,11 @@ type YAMLSite struct {
 	Method string `yaml:"method"`
 }
 
+type YAMLCrawl struct {
+	Name   string `yaml:"name"`
+	Search string `yaml:"search"`
+}
+
 type YAMLConfig struct {
 	F []YAMLFields `yaml:"fields"`
 	B YAMLBruteforce `yaml:"bruteforce"`
@@ -27,6 +32,7 @@ type YAMLConfig struct {
 	OP YAMLOn_pass `yaml:"on_pass"`
 	H []YAMLHeaders `yaml:"headers"`
 	S YAMLSite `yaml:"site"`
+	C YAMLCrawl `yaml:"crawl"`
 }
 
 type YAMLOn_fail struct {

