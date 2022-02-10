@@ -18,9 +18,9 @@ bruteforce: # required
   # method 3
   from: stdin
   
+  # This option turns off "trying password" messages
   no_verbose: false # optional
   
-
   threads: 20 # optional | default: 5
 
 headers: # optional
