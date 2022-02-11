@@ -35,9 +35,9 @@ config.yml
 
 site:
     host: https://website.com/login # the login page that you want to crack.
-    method: POST # request method for making request
+    method: POST # request method for making a request
 bruteforce:
-    field: password # the field that you want to brute-firce (important)
+    field: password # the field that you want to brute-force (important)
     
     # there is 3 ways from where you can load a wordlist
     # method 1 - from the file
@@ -65,14 +65,14 @@ bruteforce:
 ```yaml
 config.yml
 
-    # Next, you need to specify how much threads you want to use. Default value is 5
+    # Next, you need to specify how many threads you want to use. The default value is 5
     threads: 30
     
     # If you don't want to see messages like "trying password...", you can turn it off with the option below:
     # It's optional, so if you don't need to turn it off, you can skip this option
     no_verbose: true
     
-    # By default, when the tool finds out the password, the password will be printed in the screen, 
+    # By default, when the tool finds out the password, the password will be printed on the screen, 
     # ...but if you want you can set it to save in the file
     output: /home/naru/my_target/password.txt
     
