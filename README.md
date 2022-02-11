@@ -7,8 +7,8 @@
   <img src="https://img.shields.io/github/contributors/narukoshin/custom-bruteforce">
   <br><br>
   <div>
-    <a href="https://twitter.com/narukoshin"><img src="https://media4.giphy.com/media/iFUiSYMNPvIJZDpMKN/giphy.gif?cid=ecf05e471v5jn6vuhczu1tflu2wm7qt11atwybfwcgaqxz38&rid=giphy.gif&ct=s" width="120"></a>
-    <a href="https://instagram.com/naru.koshin"><img src="https://media1.giphy.com/media/Wu9Graz2W46frtHFKc/giphy.gif?cid=ecf05e47h46mbuhq40rgevni5rbxgadpw5icrr71vr9nu8d4&rid=giphy.gif&ct=s" width="120"></a>
+    <a target="_blank" href="https://twitter.com/narukoshin"><img src="https://media4.giphy.com/media/iFUiSYMNPvIJZDpMKN/giphy.gif?cid=ecf05e471v5jn6vuhczu1tflu2wm7qt11atwybfwcgaqxz38&rid=giphy.gif&ct=s" width="120"></a>
+    <a target="_blank" href="https://instagram.com/naru.koshin"><img src="https://media1.giphy.com/media/Wu9Graz2W46frtHFKc/giphy.gif?cid=ecf05e47h46mbuhq40rgevni5rbxgadpw5icrr71vr9nu8d4&rid=giphy.gif&ct=s" width="120"></a>
   </div>
 </div>
 <h1>📚 Getting started</h1>
