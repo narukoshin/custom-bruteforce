@@ -91,7 +91,7 @@ fields:
       value: admin
       
 # Adding error message if the password is incorrect
-# p.s. this will be ignored if you added on_pass option
+# p.s. this will be ignored if you will add on_pass option
 on_fail:
     message: incorrect password
     
