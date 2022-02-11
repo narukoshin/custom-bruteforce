@@ -95,7 +95,7 @@ fields:
 on_fail:
     message: incorrect password
     
-# Adding the successful message, if for example, we are in the admin panel
+# Adding the successful message, if, for example, we are in the admin panel
 on_pass:
     message: Welcome, 
     
