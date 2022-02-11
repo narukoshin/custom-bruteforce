@@ -19,6 +19,9 @@
 ```
 ... or download binaries from the releases page.
 
+<h1>📅 TODO List</h1>
+[] I'm thinking about to add a new option for proxies
+
 <h1>⚙ Creating configuration</h1>
 <p>Before you start using the tool, you need to create a config file called <code>config.yml</code></p>
 
