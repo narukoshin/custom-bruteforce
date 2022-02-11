@@ -15,6 +15,7 @@
 <p>To download this tool, type the command below:</p>
 
 ```sh
+bash
   git clone https://github.com/narukoshin/custom-bruteforce
 ```
 ... or download binaries from the releases page.
