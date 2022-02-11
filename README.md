@@ -19,6 +19,10 @@
 ```
 ... or download binaries from the releases page.
 
+<h1>📅 TODO</h1>
+
+- [ ] Proxy Feature
+
 <h1>⚙ Creating configuration</h1>
 <p>Before you start using the tool, you need to create a config file called <code>config.yml</code></p>
 
