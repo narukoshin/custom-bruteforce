@@ -23,6 +23,8 @@
 
 - [ ] Proxy Feature
 
+💭 If you have any suggestion about new features, please open a new issue with the enhancement label.
+
 <h1>⚙ Creating configuration</h1>
 <p>Before you start using the tool, you need to create a config file called <code>config.yml</code></p>
 
