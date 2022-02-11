@@ -32,6 +32,7 @@ var (
 
 	// Crawl
 	Crawl_Search string = config.YAMLConfig.C.Search
+	Crawl_Url	 string = config.YAMLConfig.C.Url
 	Crawl_Name	 string = config.YAMLConfig.C.Name
 )
 
@@ -57,6 +58,7 @@ var ErrEmptyField  		= errors.New("the field that you want to bruteforce is empt
 var ErrTooMuchThreads	= errors.New("too much threads for such small wordlist, please decrease amount of threads") 
 var ErrUnixRequired     = errors.New("you can not use this feature on Windows, you can use WSL instead")
 var ErrMissingGroup		= errors.New("error: you forget to add group to the crawl/search option")
+var ErrNoCrawlName		= errors.New("error: you forget to add the name of the field for token, without that option we can't set the token")
 
 // verifying if the list type is correct, currently there is only two types available - file and list
 func verify_type() bool{
@@ -213,6 +215,11 @@ func _run_attack(pass string) error {
 				Attack = Attack_Result {Status: StatusFinished, Stop: true, ErrorMessage: err.Error()}
 				return nil
 			}
+			// Checking if the Crawl_Name is added because it's a very important option
+			if len(Crawl_Name) == 0 {
+				Attack = Attack_Result {Status: StatusFinished, Stop: true, ErrorMessage: err.Error()}
+				return nil
+			}
 			values.Set(Crawl_Name, token)
 		} 
 		for _, field := range site.Fields {
@@ -288,7 +295,14 @@ func WritePasswordToFile(){
 
 // Crawling out the token
 func Bypassing_Security_Token(client *http.Client) (string, error) {
-	req, err := http.NewRequest(http.MethodGet, site.Host, nil)
+	var Token_Uri string
+	if len(Crawl_Url) != 0 {
+		Token_Uri = Crawl_Url
+	} else {
+		Token_Uri = site.Host
+	}
+
+	req, err := http.NewRequest(http.MethodGet, Token_Uri, nil)
 	if err != nil {
 		return "", err
 	}

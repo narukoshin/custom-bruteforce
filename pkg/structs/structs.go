@@ -22,6 +22,7 @@ type YAMLSite struct {
 
 type YAMLCrawl struct {
 	Name   string `yaml:"name"`
+	Url    string `yaml:"url"`
 	Search string `yaml:"search"`
 }
 
