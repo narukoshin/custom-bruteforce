@@ -104,6 +104,6 @@ on_pass:
 crawl:
     url: <token-url> # if the token is not located in the original request, then we will set a new one to get the token
     name: token # the name of the field where the token will be passed to the request
-    search: ([a-z0-9]+){32} # to find the token, use regex
+    search: "token = '([a-z0-9]{32})" # to find the token, use regex
 ```
 <p>And that's it, now you are a professional cracker.</p>
