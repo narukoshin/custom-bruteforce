@@ -22,6 +22,7 @@
 <h1>📅 TODO</h1>
 
 - [ ] Proxy Feature
+- [ ] Idea about `import` option where you can import config file with the custom name like `import: my_website.yml`
 
 💭 If you have any suggestion about new features, please open a new issue with the enhancement label.
 
@@ -32,6 +33,8 @@
 touch config.yml
 ... or
 vim config.yml
+... or you can use pre-made config
+mv config.sample.yml config.yml
 ```
 
 <p>Next, you need to fill the config file with the information about your target to brute-force.</p>
