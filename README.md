@@ -23,6 +23,7 @@
 
 - [ ] Proxy Feature
 - [ ] Idea about `import` option where you can import config file with the custom name like `import: my_website.yml`
+- [ ] Email notifications
 
 💭 If you have any suggestion about new features, please open a new issue with the enhancement label.
 
