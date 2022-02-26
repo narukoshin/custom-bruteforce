@@ -19,6 +19,14 @@
 ```
 ... or download binaries from the releases page.
 
+<h1>📅 TODO</h1>
+
+- [ ] Proxy Feature
+- [ ] Idea about `import` option where you can import config file with the custom name like `import: my_website.yml`
+- [ ] Email notifications
+
+💭 If you have any suggestion about new features, please open a new issue with the enhancement label.
+
 <h1>⚙ Creating configuration</h1>
 <p>Before you start using the tool, you need to create a config file called <code>config.yml</code></p>
 
@@ -26,6 +34,8 @@
 touch config.yml
 ... or
 vim config.yml
+... or you can use pre-made config
+mv config.sample.yml config.yml
 ```
 
 <p>Next, you need to fill the config file with the information about your target to brute-force.</p>
@@ -91,7 +101,7 @@ fields:
       value: admin
       
 # Adding error message if the password is incorrect
-# p.s. this will be ignored if you added on_pass option
+# p.s. this will be ignored if you will add on_pass option
 on_fail:
     message: incorrect password
     
