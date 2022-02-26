@@ -46,3 +46,5 @@ crawl: # optional
   url: <token-url> # optional
   name: field-name
   search: ([a-z0-9]+){32} # a regex to find the token
+  
+import: example.yml # optional
