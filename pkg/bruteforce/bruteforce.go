@@ -57,8 +57,9 @@ var ErrWrongType   		= errors.New("you specified the wrong source of dictionary,
 var ErrEmptyField  		= errors.New("the field that you want to bruteforce is empty")
 var ErrTooMuchThreads	= errors.New("too much threads for such small wordlist, please decrease amount of threads") 
 var ErrUnixRequired     = errors.New("you can not use this feature on Windows, you can use WSL instead")
-var ErrMissingGroup		= errors.New("error: you forget to add group to the crawl/search option")
-var ErrNoCrawlName		= errors.New("error: you forget to add the name of the field for token, without that option we can't set the token")
+var ErrMissingGroup		= errors.New("you forget to add group to the crawl/search option")
+var ErrNoCrawlName		= errors.New("you forget to add the name of the field for token, without that option we can't set the token")
+var ErrThreadsLessZero	= errors.New("threads can't be less than zero, zero threads default value is 5")
 
 // verifying if the list type is correct, currently there is only two types available - file and list
 func verify_type() bool{
@@ -115,6 +116,11 @@ func Dictionary() ([][]string, error) {
 	if Threads == 0 {
 		Threads = 5
 	}
+	// checking if the threads is not less than 0
+	if Threads < 0 {
+		return nil, ErrThreadsLessZero
+	}
+
 	// calculating the length how much passwords will be in one thread
 	var size int = len(wordlist) / Threads
 	// creating the output slice
