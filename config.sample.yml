@@ -1,3 +1,7 @@
+# if you want to import your config from another file
+# this file will be ignored then and the config will be loaded from this option
+import: example.yml # optional
+
 site: # required
   host: https://www.narukoshin.me/login # required
   method: POST # required
@@ -47,5 +51,6 @@ crawl: # optional
   name: field-name
   search: ([a-z0-9]+){32} # a regex to find the token
   
-# if you want to import your config from another file
-import: example.yml # optional
+# if you want to tunnel all the requests through the proxy
+proxy:
+    socks: socks5://127.0.0.1:9050?timeout=5s # for Tor proxy
