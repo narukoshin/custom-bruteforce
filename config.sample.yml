@@ -52,5 +52,5 @@ crawl: # optional
   search: ([a-z0-9]+){32} # a regex to find the token
   
 # if you want to tunnel all the requests through the proxy
-proxy:
+proxy: # optional
     socks: socks5://127.0.0.1:9050?timeout=5s # for Tor proxy
