@@ -21,7 +21,9 @@
 
 <h1>📅 TODO</h1>
 
-- [ ] Proxy Feature
+- [x] Proxy Feature <br>
+      + added in commit: <a href="https://github.com/narukoshin/custom-bruteforce/commit/ba5ab6fefc17f29476e31eae98774edc23e94815">`ba5ab6f`</a><br>
+      + changelog: <a href="https://github.com/narukoshin/custom-bruteforce/releases/tag/v2.3-beta">`v2.3-beta`</a>
 - [x] Idea about `import` option where you can import config file with the custom name like `import: my_website.yml` <br>
       + added in commit: <a href="https://github.com/narukoshin/custom-bruteforce/commit/823b14f907ce92a44d69174510f681ba0da31c6e">`823b14f`</a><br>
       + changelog: <a href="https://github.com/narukoshin/custom-bruteforce/releases/tag/v2.3-beta">`v2.3-beta`</a>
