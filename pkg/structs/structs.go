@@ -35,6 +35,11 @@ type YAMLConfig struct {
 	H []YAMLHeaders `yaml:"headers"`
 	S YAMLSite `yaml:"site"`
 	C YAMLCrawl `yaml:"crawl"`
+	P YAMLProxy `yaml:"proxy"`
+}
+
+type YAMLProxy struct {
+	Socks string `yaml:"socks"`
 }
 
 type YAMLOn_fail struct {

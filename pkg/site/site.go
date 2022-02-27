@@ -1,8 +1,9 @@
-package site
+	package site
 
 import (
 	"custom-bruteforce/pkg/config"
 	"custom-bruteforce/pkg/structs"
+	"custom-bruteforce/pkg/proxy"
 	"errors"
 	"fmt"
 	"net"
@@ -15,14 +16,14 @@ var (
 	Host 	string	= config.YAMLConfig.S.Host
 	Method 	string  = config.YAMLConfig.S.Method
 	Fields  []structs.YAMLFields = config.YAMLConfig.F
+
+	// Error message if the request method in the config is incorrect
+	ErrInvalidMethod = errors.New("please specify a valid request method")
+	ErrDeadHost		 = errors.New("looks that the host is not alive, check your config again")
+
+	// All request methods that are allowed to use
+	Methods_Allowed []string = []string{"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"}
 )
-
-// Error message if the request method in the config is incorrect
-var ErrInvalidMethod = errors.New("please specify a valid request method")
-var ErrDeadHost		 = errors.New("looks that the host is not alive, check your config again")
-
-// All request methods that are allowed to use
-var Methods_Allowed []string = []string{"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"}
 
 // Verifying if the request method is correct
 func Verify_Method() error {
@@ -49,8 +50,19 @@ func Verify_Host() error {
 		return 80
 	}
 	// checking if the host is alive
-	if _, err = net.DialTimeout("tcp", fmt.Sprintf("%s:%d", url.Host, port()), 3 * time.Second); err != nil {
-		return ErrDeadHost
+
+	if proxy.IsProxy(){ // checking with the proxy
+		dialer, err := proxy.Dialer()
+		if err != nil {
+			return err
+		}
+		if _, err := dialer.Dial("tcp", fmt.Sprintf("%s:%d", url.Host, port())); err != nil {
+			return err
+		}
+	} else { // checking without the proxy
+		if _, err = net.DialTimeout("tcp", fmt.Sprintf("%s:%d", url.Host, port()), 3 * time.Second); err != nil {
+			return ErrDeadHost
+		}
 	}
 	return nil
 }

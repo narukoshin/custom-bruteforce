@@ -5,6 +5,7 @@ import (
 	"custom-bruteforce/pkg/headers"
 	"custom-bruteforce/pkg/site"
 	"custom-bruteforce/pkg/structs"
+	"custom-bruteforce/pkg/proxy"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -211,6 +212,10 @@ func _run_attack(pass string) error {
 		}
 		client.Jar = jar
 
+		// Adding proxy, if there is any
+		if proxy.IsProxy() {
+			client.Transport = proxy.Drive()
+		}
 		values := url.Values{}
 
 		// checking if the token pattern is added
