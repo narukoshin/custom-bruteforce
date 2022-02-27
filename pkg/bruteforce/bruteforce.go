@@ -238,6 +238,10 @@ func _run_attack(pass string) error {
 		}
 		values.Set(Field, pass)
 
+		// adding a slash to the host if there is no slash
+		if site.Host[:len(site.Host)-1] != "/" {
+			site.Host = site.Host + "/"
+		}
 		req, err := http.NewRequest(site.Method, site.Host, strings.NewReader(values.Encode()))
 		if err != nil {
 			return err
