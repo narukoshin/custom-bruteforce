@@ -18,29 +18,40 @@ import (
 	"sync"
 )
 
-var Types_Available []string = []string{"list", "file", "stdin"}
-
 var (
-	Field 	string 		= config.YAMLConfig.B.Field
-	From  	string 		= config.YAMLConfig.B.From
-	File	string 		= config.YAMLConfig.B.File
-	List	[]string	= config.YAMLConfig.B.List
+	Types_Available []string 	= []string{"list", "file", "stdin"}
+
+	Field 	string 				= config.YAMLConfig.B.Field
+	From  	string 				= config.YAMLConfig.B.From
+	File	string 				= config.YAMLConfig.B.File
+	List	[]string			= config.YAMLConfig.B.List
 	Fail	structs.YAMLOn_fail = config.YAMLConfig.OF
 	Pass	structs.YAMLOn_pass = config.YAMLConfig.OP
-	Threads int			= config.YAMLConfig.B.Threads
-	NoVerbose bool		= config.YAMLConfig.B.NoVerbose
-	Output	string		= config.YAMLConfig.B.Output
+	Threads int					= config.YAMLConfig.B.Threads
+	NoVerbose bool				= config.YAMLConfig.B.NoVerbose
+	Output	string				= config.YAMLConfig.B.Output
 
 	// Crawl
-	Crawl_Search string = config.YAMLConfig.C.Search
-	Crawl_Url	 string = config.YAMLConfig.C.Url
-	Crawl_Name	 string = config.YAMLConfig.C.Name
-)
+	Crawl_Search string 		= config.YAMLConfig.C.Search
+	Crawl_Url	 string 		= config.YAMLConfig.C.Url
+	Crawl_Name	 string 		= config.YAMLConfig.C.Name
 
-// some status messages
-var (
-	StatusFinished string = "finished"
-	StatusFound	string = "found"
+	// some status messages
+	StatusFinished string 		= "finished"
+	StatusFound	string 			= "found"
+
+	Attack Attack_Result
+
+	// adding some error messages
+	ErrNoPasswords 				= errors.New("there is no passwords available for bruteforce, please specify some passwords")
+	ErrOpeningFile 				= errors.New("we have issues with opening a file, make sure that file exists and is readable")
+	ErrWrongType   				= errors.New("you specified the wrong source of dictionary, allowed types are (file, list)")
+	ErrEmptyField  				= errors.New("the field that you want to bruteforce is empty")
+	ErrTooMuchThreads			= errors.New("too much threads for such small wordlist, please decrease amount of threads") 
+	ErrUnixRequired     		= errors.New("you can not use this feature on Windows, you can use WSL instead")
+	ErrMissingGroup				= errors.New("you forget to add group to the crawl/search option")
+	ErrNoCrawlName				= errors.New("you forget to add the name of the field for token, without that option we can't set the token")
+	ErrThreadsLessZero			= errors.New("threads can't be less than zero, zero threads default value is 5")
 )
 
 type Attack_Result struct {
@@ -49,18 +60,6 @@ type Attack_Result struct {
 	Stop 		bool
 	ErrorMessage string
 }
-var Attack Attack_Result
-
-// adding some error messages
-var ErrNoPasswords 		= errors.New("there is no passwords available for bruteforce, please specify some passwords")
-var ErrOpeningFile 		= errors.New("we have issues with opening a file, make sure that file exists and is readable")
-var ErrWrongType   		= errors.New("you specified the wrong source of dictionary, allowed types are (file, list)")
-var ErrEmptyField  		= errors.New("the field that you want to bruteforce is empty")
-var ErrTooMuchThreads	= errors.New("too much threads for such small wordlist, please decrease amount of threads") 
-var ErrUnixRequired     = errors.New("you can not use this feature on Windows, you can use WSL instead")
-var ErrMissingGroup		= errors.New("you forget to add group to the crawl/search option")
-var ErrNoCrawlName		= errors.New("you forget to add the name of the field for token, without that option we can't set the token")
-var ErrThreadsLessZero	= errors.New("threads can't be less than zero, zero threads default value is 5")
 
 // verifying if the list type is correct, currently there is only two types available - file and list
 func verify_type() bool{
