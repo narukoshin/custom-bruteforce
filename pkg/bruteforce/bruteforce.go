@@ -1,21 +1,22 @@
 package bruteforce
 
 import (
-	"custom-bruteforce/pkg/config"
 	"custom-bruteforce/pkg/headers"
-	"custom-bruteforce/pkg/site"
 	"custom-bruteforce/pkg/structs"
+	"custom-bruteforce/pkg/custom"
+	"custom-bruteforce/pkg/config"
 	"custom-bruteforce/pkg/proxy"
-	"errors"
-	"fmt"
+	"custom-bruteforce/pkg/site"
+	"net/http/cookiejar"
 	"io/ioutil"
 	"net/http"
-	"net/http/cookiejar"
-	"net/url"
-	"regexp"
 	"runtime"
 	"strings"
+	"net/url"
+	"regexp"
+	"errors"
 	"sync"
+	"fmt"
 )
 
 var (
@@ -250,6 +251,16 @@ func _run_attack(pass string) error {
 			for _, header := range headers.Get(){
 				req.Header.Set(header.Name, header.Value)
 			}
+		}
+
+		// custom code starts here
+		custom := custom.Middleware {
+			Client: &client,
+			Request: req,
+		}
+		err = custom.Do()
+		if err != nil {
+			return err
 		}
 
 		resp, err := client.Do(req)
