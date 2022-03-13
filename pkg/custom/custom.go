@@ -10,5 +10,6 @@ type Middleware struct {
 }
 
 func (m *Middleware) Do() error {
+	// your custom code here...
 	return nil
 }
