@@ -68,7 +68,8 @@ bruteforce:
         - password2
         - password3
     # method 3 - from the stdin
-    # info: be careful with this method because of the RAM leak | more info - https://github.com/narukoshin/custom-bruteforce/issues/2
+    # info: be careful with this method because of the RAM leak.
+    # more info about the bug: https://github.com/narukoshin/custom-bruteforce/issues/2
     from: stdin
 ```
 <p>When you are using <b>stdin</b> method, type the command as shown below:</p>
