@@ -68,6 +68,7 @@ bruteforce:
         - password2
         - password3
     # method 3 - from the stdin
+    # info: be careful with this method because of the RAM leak
     from: stdin
 ```
 <p>When you are using <b>stdin</b> method, type the command as shown below:</p>
