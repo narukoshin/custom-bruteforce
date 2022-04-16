@@ -47,6 +47,10 @@ mv config.sample.yml config.yml
 ```yaml
 config.yml
 
+# you can import another config file with custom name, for example, my-project.yml
+import: my-project.yml
+# after import, following lines will be ignored.
+
 site:
     host: https://website.com/login # the login page that you want to crack.
     method: POST # request method for making a request
@@ -64,6 +68,8 @@ bruteforce:
         - password2
         - password3
     # method 3 - from the stdin
+    # info: be careful with this method because of the RAM leak.
+    # more info about the bug: https://github.com/narukoshin/custom-bruteforce/issues/2
     from: stdin
 ```
 <p>When you are using <b>stdin</b> method, type the command as shown below:</p>
@@ -108,10 +114,12 @@ fields:
 # p.s. this will be ignored if you will add on_pass option
 on_fail:
     message: incorrect password
+    status_code: 401 # default value is 0
     
 # Adding the successful message, if, for example, we are in the admin panel
 on_pass:
     message: Welcome, 
+    status_code: 200 # default value is 200
     
 # And the last cherry of this tool is crawl option
 # This option can help you find the token if there is any and will add it to your request
