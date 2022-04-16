@@ -108,10 +108,12 @@ fields:
 # p.s. this will be ignored if you will add on_pass option
 on_fail:
     message: incorrect password
+    status_code: 401 # default value is 0
     
 # Adding the successful message, if, for example, we are in the admin panel
 on_pass:
     message: Welcome, 
+    status_code: 200 # default value is 200
     
 # And the last cherry of this tool is crawl option
 # This option can help you find the token if there is any and will add it to your request
