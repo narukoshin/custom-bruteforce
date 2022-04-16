@@ -44,12 +44,10 @@ type YAMLProxy struct {
 
 type YAMLOn_fail struct {
 	Message string `yaml:"message"`
-	Length int `yaml:"content_length"`
 }
 
 type YAMLOn_pass struct {
 	Message string `yaml:"message"`
-	Length int `yaml:"content_length"`
 }
 
 type YAMLHeaders struct {
