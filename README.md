@@ -47,6 +47,10 @@ mv config.sample.yml config.yml
 ```yaml
 config.yml
 
+# you can import another config file with custom name, for example, my-project.yml
+import: my-project.yml
+# after import, following lines will be ignored.
+
 site:
     host: https://website.com/login # the login page that you want to crack.
     method: POST # request method for making a request
