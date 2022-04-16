@@ -1,22 +1,25 @@
 package bruteforce
 
 import (
-	"custom-bruteforce/pkg/headers"
-	"custom-bruteforce/pkg/structs"
-	"custom-bruteforce/pkg/custom"
+	"bytes"
 	"custom-bruteforce/pkg/config"
+	"custom-bruteforce/pkg/custom"
+	"custom-bruteforce/pkg/headers"
 	"custom-bruteforce/pkg/proxy"
 	"custom-bruteforce/pkg/site"
-	"net/http/cookiejar"
+	"custom-bruteforce/pkg/structs"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
-	"runtime"
-	"strings"
+	"net/http/cookiejar"
 	"net/url"
 	"regexp"
-	"errors"
+	"runtime"
+	"strings"
 	"sync"
-	"fmt"
 )
 
 var (
@@ -31,6 +34,8 @@ var (
 	Threads int					= config.YAMLConfig.B.Threads
 	NoVerbose bool				= config.YAMLConfig.B.NoVerbose
 	Output	string				= config.YAMLConfig.B.Output
+	OFStatusCode int			= config.YAMLConfig.OF.StatusCode
+	OPStatusCode int			= config.YAMLConfig.OP.StatusCode
 
 	// Crawl
 	Crawl_Search string 		= config.YAMLConfig.C.Search
@@ -162,6 +167,15 @@ func Dictionary() ([][]string, error) {
 
 // The function where all the magic happens
 func Start() error {
+	if NoVerbose {
+		fmt.Printf("\033[34m[~] starting brute-force attack in no-verbose mode\033[0m\n")
+	}
+
+	// setting the default on_pass status code
+	if OPStatusCode == 0 {
+		OPStatusCode = http.StatusOK
+	}
+
 	// loading wordlist
 	wordlist, err := Dictionary()
 	if err != nil {
@@ -216,33 +230,44 @@ func _run_attack(pass string) error {
 		if proxy.IsProxy() {
 			client.Transport = proxy.Drive()
 		}
-		values := url.Values{}
 
-		// checking if the token pattern is added
-		if Crawl_Search != "" {
-			// finding the token
-			token, err := Bypassing_Security_Token(&client)
+		// adding a data to the request
+		var data io.Reader
+		if headers.Find("Content-Type") == "application/json" {
+			d := make(map[string]interface{})
+			for _, field := range site.Fields {
+				d[field.Name] = field.Value
+			}
+			if Crawl_Search != "" {
+				token := Find_Token(client)
+				d[Crawl_Name] = token
+			}
+			d[Field] = pass
+			a, err := json.Marshal(d)
 			if err != nil {
-				Attack = Attack_Result {Status: StatusFinished, Stop: true, ErrorMessage: err.Error()}
-				return nil
+			  return err
 			}
-			// Checking if the Crawl_Name is added because it's a very important option
-			if len(Crawl_Name) == 0 {
-				Attack = Attack_Result {Status: StatusFinished, Stop: true, ErrorMessage: err.Error()}
-				return nil
+			data = bytes.NewReader(a)
+		} else {
+			values := url.Values{}
+			// checking if the token pattern is added
+			if Crawl_Search != "" {
+				token := Find_Token(client)
+				values.Set(Crawl_Name, token)
+			} 
+			for _, field := range site.Fields {
+				values.Set(field.Name, field.Value)
 			}
-			values.Set(Crawl_Name, token)
-		} 
-		for _, field := range site.Fields {
-			values.Set(field.Name, field.Value)
+			values.Set(Field, pass)
+			data = strings.NewReader(values.Encode())
 		}
-		values.Set(Field, pass)
 
 		// adding a slash to the host if there is no slash
 		if site.Host[len(site.Host)-1] != 47 {
 			site.Host = site.Host + "/"
 		}
-		req, err := http.NewRequest(site.Method, site.Host, strings.NewReader(values.Encode()))
+
+		req, err := http.NewRequest(site.Method, site.Host, data)
 		if err != nil {
 			return err
 		}
@@ -268,19 +293,22 @@ func _run_attack(pass string) error {
 			return err
 		}
 
-		if resp.StatusCode == http.StatusOK {
+		// if server says that page doesn't exists then we are stopping the script.
+		// that would be a good idea to add an ignore option for this.
+		if resp.StatusCode == http.StatusNotFound{
+			Attack = Attack_Result {Status: StatusFinished, Stop: true, ErrorMessage: "The server says 404"}
+			return nil
+		} else {
 			body, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
 				return err
 			}
-			if (len(Fail.Message) != 0 && !strings.Contains(string(body), Fail.Message)) && (len(Pass.Message) == 0) || (len(Pass.Message) != 0 && strings.Contains(string(body), Pass.Message)) {
+			if ((len(Fail.Message) != 0 && !strings.Contains(string(body), Fail.Message)) && (len(Pass.Message) == 0) || (len(Pass.Message) != 0 && strings.Contains(string(body), Pass.Message))) || (resp.StatusCode != OFStatusCode) && (resp.StatusCode == OPStatusCode) {
+				// some tests on status codes
 				Attack = Attack_Result {Status: StatusFound, Password: pass, Stop: true}
 				return nil
 			}
 			_while_running(pass)
-		} else {
-			Attack = Attack_Result {Status: StatusFinished, Stop: true, ErrorMessage: "The server says 404"}
-			return nil
 		}
 	}
 	return nil
@@ -353,4 +381,21 @@ func Bypassing_Security_Token(client *http.Client) (string, error) {
 		return string(re.FindSubmatch(body)[1]), nil
 	}
 	return "", nil
+}
+
+// finding the token
+func Find_Token(client http.Client) (token string) {
+	var err error
+	// finding the token
+	token, err = Bypassing_Security_Token(&client)
+	if err != nil {
+		Attack = Attack_Result {Status: StatusFinished, Stop: true, ErrorMessage: err.Error()}
+		return ""
+	}
+	// Checking if the Crawl_Name is added because it's a very important option
+	if len(Crawl_Name) == 0 {
+		Attack = Attack_Result {Status: StatusFinished, Stop: true, ErrorMessage: err.Error()}
+		return ""
+	}
+	return
 }
