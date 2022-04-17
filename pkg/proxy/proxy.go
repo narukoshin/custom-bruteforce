@@ -5,6 +5,7 @@ import (
 	"custom-bruteforce/pkg/config"
 	"golang.org/x/net/proxy"
 	"h12.io/socks"
+	"crypto/tls"
 	"net/http"
 	"net/url"
 	"time"
@@ -12,9 +13,13 @@ import (
 )
 
 var Proxy structs.YAMLProxy =  config.YAMLConfig.P
+var IgnoreTLS bool			=  config.YAMLConfig.S.IgnoreTLS
 
 func dial_socks() *http.Transport {
 	dialSocks := socks.Dial(Proxy.Socks)
+	if IgnoreTLS {
+		return &http.Transport{Dial: dialSocks, TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
+	}
 	return &http.Transport{Dial: dialSocks}
 }
 

@@ -2,6 +2,7 @@ package bruteforce
 
 import (
 	"bytes"
+	"crypto/tls"
 	"custom-bruteforce/pkg/config"
 	"custom-bruteforce/pkg/custom"
 	"custom-bruteforce/pkg/headers"
@@ -20,6 +21,7 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+	"time"
 )
 
 var (
@@ -27,15 +29,22 @@ var (
 
 	Field 	string 				= config.YAMLConfig.B.Field
 	From  	string 				= config.YAMLConfig.B.From
-	File	string 				= config.YAMLConfig.B.File
+	File	string				= config.YAMLConfig.B.File
 	List	[]string			= config.YAMLConfig.B.List
 	Fail	structs.YAMLOn_fail = config.YAMLConfig.OF
 	Pass	structs.YAMLOn_pass = config.YAMLConfig.OP
 	Threads int					= config.YAMLConfig.B.Threads
 	NoVerbose bool				= config.YAMLConfig.B.NoVerbose
 	Output	string				= config.YAMLConfig.B.Output
+
+	// status_code for on_fail and on_pass
 	OFStatusCode int			= config.YAMLConfig.OF.StatusCode
 	OPStatusCode int			= config.YAMLConfig.OP.StatusCode
+
+	IgnoreTLS bool				= config.YAMLConfig.S.IgnoreTLS
+
+	// debug will show the response body of the request
+	Debug 	  bool				= config.YAMLConfig.B.Debug
 
 	// Crawl
 	Crawl_Search string 		= config.YAMLConfig.C.Search
@@ -167,8 +176,19 @@ func Dictionary() ([][]string, error) {
 
 // The function where all the magic happens
 func Start() error {
+	// printing a message that no-verbose mode is enabled.
 	if NoVerbose {
-		fmt.Printf("\033[34m[~] starting brute-force attack in no-verbose mode\033[0m\n")
+		fmt.Printf("\033[34m[~] Starting brute-force attack in no-verbose mode...\033[0m\n")
+	}
+
+	// printing a message that requests are proxied.
+	if proxy.IsProxy() {
+		fmt.Printf("\033[34m[~] Requests are tunneled through the proxy\033[0m\n")
+	}
+
+	// printing a message that debugging is enabled.
+	if Debug {
+		fmt.Printf("\033[34m[~] Debug: Enabled\033[0m\n")
 	}
 
 	// setting the default on_pass status code
@@ -219,7 +239,9 @@ func Start() error {
 // launching the thread brute-force attack
 func _run_attack(pass string) error {
 	if !Attack.Stop {
-		client := http.Client{}
+		client := http.Client{
+			Timeout: 15 * time.Second,
+		}
 		jar, err := cookiejar.New(nil)
 		if err != nil {
 			return err
@@ -229,6 +251,8 @@ func _run_attack(pass string) error {
 		// Adding proxy, if there is any
 		if proxy.IsProxy() {
 			client.Transport = proxy.Drive()
+		} else if IgnoreTLS {
+			client.Transport = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
 		}
 
 		// adding a data to the request
@@ -290,8 +314,14 @@ func _run_attack(pass string) error {
 
 		resp, err := client.Do(req)
 		if err != nil {
+			if strings.Contains(err.Error(), "timeout") {
+				// if there was a timeout error, repeating the same request again until it's successful.
+				_run_attack(pass)
+				return nil
+			}
 			return err
 		}
+		defer resp.Body.Close()
 
 		// if server says that page doesn't exists then we are stopping the script.
 		// that would be a good idea to add an ignore option for this.
@@ -303,10 +333,15 @@ func _run_attack(pass string) error {
 			if err != nil {
 				return err
 			}
-			if ((len(Fail.Message) != 0 && !strings.Contains(string(body), Fail.Message)) && (len(Pass.Message) == 0) || (len(Pass.Message) != 0 && strings.Contains(string(body), Pass.Message))) || (resp.StatusCode != OFStatusCode) && (resp.StatusCode == OPStatusCode) {
-				// some tests on status codes
-				Attack = Attack_Result {Status: StatusFound, Password: pass, Stop: true}
-				return nil
+			if Debug {
+				fmt.Println(string(body))
+			}
+			// some tests on status codes
+			if resp.StatusCode != OFStatusCode && resp.StatusCode == OPStatusCode {
+				if ((len(Fail.Message) != 0 && !strings.Contains(string(body), Fail.Message)) && (len(Pass.Message) == 0) || (len(Pass.Message) != 0 && strings.Contains(string(body), Pass.Message))) {
+					Attack = Attack_Result {Status: StatusFound, Password: pass, Stop: true}
+					return nil
+				}
 			}
 			_while_running(pass)
 		}
@@ -359,6 +394,7 @@ func Bypassing_Security_Token(client *http.Client) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	// defer req.Body.Close()
 	if headers.Is() {
 		for _, header := range headers.Get(){
 			req.Header.Set(header.Name, header.Value)
@@ -368,6 +404,7 @@ func Bypassing_Security_Token(client *http.Client) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	defer resp.Body.Close()
 	if resp.StatusCode == http.StatusOK {
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
@@ -387,11 +424,12 @@ func Bypassing_Security_Token(client *http.Client) (string, error) {
 func Find_Token(client http.Client) (token string) {
 	var err error
 	// finding the token
-	token, err = Bypassing_Security_Token(&client)
-	if err != nil {
-		Attack = Attack_Result {Status: StatusFinished, Stop: true, ErrorMessage: err.Error()}
-		return ""
-	}
+	try_again:
+		token, err = Bypassing_Security_Token(&client)
+		if err != nil {
+			// if the request failed to get the token, repeating the request again until it's successful.
+			goto try_again
+		}
 	// Checking if the Crawl_Name is added because it's a very important option
 	if len(Crawl_Name) == 0 {
 		Attack = Attack_Result {Status: StatusFinished, Stop: true, ErrorMessage: err.Error()}

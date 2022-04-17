@@ -13,11 +13,13 @@ type YAMLBruteforce struct {
 	Threads int `yaml:"threads"`
 	NoVerbose bool `yaml:"no_verbose"`
 	Output	string	`yaml:"output"`
+	Debug	bool	`yaml:"debug"`
 }
 
 type YAMLSite struct {
 	Host string `yaml:"host"`
 	Method string `yaml:"method"`
+	IgnoreTLS bool `yaml:"ignore_tls"`
 }
 
 type YAMLCrawl struct {
