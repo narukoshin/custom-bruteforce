@@ -38,6 +38,7 @@ type YAMLConfig struct {
 	S YAMLSite `yaml:"site"`
 	C YAMLCrawl `yaml:"crawl"`
 	P YAMLProxy `yaml:"proxy"`
+	E YAMLEmail `yaml:"email"`
 }
 
 type YAMLProxy struct {
@@ -57,4 +58,25 @@ type YAMLOn_pass struct {
 type YAMLHeaders struct {
 	Name string `yaml:"name"`
 	Value string `yaml:"value"`
+}
+
+type YAMLEmail struct {
+	Server YAMLEmailServer `yaml:"server"`
+	Mail   YAMLEmailMail   `yaml:"mail"`
+}
+
+type YAMLEmailServer struct {
+	Host		string		`yaml:"host"`
+	Port		string		`yaml:"port"`
+	Timeout		int			`yaml:"timeout"`
+
+	Email		string		`yaml:"email"`
+	Password	string		`yaml:"password"`
+}
+
+type YAMLEmailMail struct {
+	Recipients interface{} `yaml:"recipients"`
+	Name	   string	`yaml:"name"`
+	Subject    string `yaml:"subject"`
+	Message	   string `yaml:"message"`
 }
