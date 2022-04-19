@@ -4,6 +4,7 @@ import (
 	"custom-bruteforce/pkg/config"
 	"custom-bruteforce/pkg/bruteforce"
 	"custom-bruteforce/pkg/site"
+	"custom-bruteforce/pkg/email"
 	"fmt"
 )
 
@@ -21,6 +22,15 @@ func Run(){
 	// verifying the request method
 	if err := site.Verify_Method(); err != nil {
 		fmt.Printf("error: %v\n", err)
+		return
+	}
+	// testing email server
+	if conn, client, err := email.Test_Connection(); err != nil {
+		if client != nil && conn != nil {
+			client.Close()
+			conn.Close()
+		}
+		fmt.Printf("error: email: %v\n", err)
 		return
 	}
 	// starting a bruteforce attack
