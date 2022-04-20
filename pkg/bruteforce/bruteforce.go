@@ -339,6 +339,7 @@ func _run_attack(pass string) error {
 			}
 			if Debug {
 				fmt.Println(string(body))
+				fmt.Println(resp.StatusCode)
 			}
 			// some tests on status codes
 			if resp.StatusCode != OFStatusCode && resp.StatusCode == OPStatusCode {
