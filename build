@@ -12,8 +12,9 @@ if [ "${#release_type}" -eq 0 ]; then
     release_type="release"
 fi
 
-bin_folder="./bin"
+bin_folder="bin"
 release_folder="./release"
+sample_config="config.sample.yml"
 
 echo "* Started compiling binaries"
 GOOS=windows go build -o ${bin_folder}/windows.exe main.go
@@ -24,4 +25,4 @@ echo "* Binaries successfuly compiled in the ${bin_folder} folder"
 archive_name="${version}-${release_type}.tar.gz"
 
 echo "* Adding binaries to the archive ${release_folder}/${archive_name}"
-tar -zcvf ${release_folder}/${archive_name} ${bin_folder} > /dev/null
+tar -zcvf ${release_folder}/${archive_name} ${bin_folder} ${sample_config} > /dev/null
