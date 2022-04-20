@@ -133,5 +133,28 @@ crawl:
 # To apply proxy setting use this option.
 proxy:
     socks: socks5://127.0.0.1:9050?timeout=5s # for Tor proxy
+    
+# email settings
+email:
+  # Email settings that will send the email
+  server:
+    host: your.server.name
+    port: 587
+    timeout: 3 # default 30
+    email: your.email@address.com
+    password: your.password123
+  # mail settings
+  mail:
+    # method 1
+    recipients: your.email@address.com
+    
+    # method 2 for multiple recipients
+    recipients:
+      - your.email@address.com
+      - another.email@address.com
+      - random.email@address.com
+    subject: Your subject text is here
+    name: Who Am I ?
+    message: "Password: <password>" # a real password will appear in <password> place.
 ```
 <p>And that's it, now you are a professional cracker.</p>
