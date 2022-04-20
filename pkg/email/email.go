@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"custom-bruteforce/pkg/config"
 	s "custom-bruteforce/pkg/structs"
+	p "custom-bruteforce/pkg/proxy"
 	"errors"
 	"fmt"
 	"net"
@@ -80,9 +81,23 @@ func Test_Connection() (net.Conn, *smtp.Client, error) {
 		if Server.Timeout == 0 {
 			Server.Timeout = 30
 		}
-		conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%s", Server.Host, Server.Port), time.Second * time.Duration(Server.Timeout))
-		if err != nil {
-			return nil, nil, err
+		var conn net.Conn
+		if p.IsProxy() {
+			dialer, err := p.Dialer(time.Duration(Server.Timeout))
+			if err != nil {
+				return nil, nil, err
+			}
+			conn, err = dialer.Dial("tcp", fmt.Sprintf("%s:%s", Server.Host, Server.Port))
+			if err != nil {
+				return nil, nil, err
+			}
+		} else {
+			var err error
+			conn, err = net.DialTimeout("tcp", fmt.Sprintf("%s:%s", Server.Host, Server.Port), time.Second * time.Duration(Server.Timeout))
+			if err != nil {
+				return nil, nil, err
+			}
+
 		}
 
 		client, err := smtp.NewClient(conn, Server.Host)

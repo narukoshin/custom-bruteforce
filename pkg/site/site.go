@@ -52,7 +52,7 @@ func Verify_Host() error {
 	// checking if the host is alive
 
 	if proxy.IsProxy(){ // checking with the proxy
-		dialer, err := proxy.Dialer()
+		dialer, err := proxy.Dialer(3)
 		if err != nil {
 			return err
 		}

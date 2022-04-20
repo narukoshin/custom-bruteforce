@@ -34,12 +34,12 @@ func Drive() *http.Transport {
 	return &http.Transport{}
 }
 
-func Dialer() (proxy.Dialer, error){
+func Dialer(timeout time.Duration) (proxy.Dialer, error){
 	parsed, err := parse_proxy(Proxy.Socks)
 	if err != nil {
 		return nil, err
 	}
-	return proxy.SOCKS5("tcp", parsed.Host, nil, &net.Dialer{Timeout: 3 * time.Second})
+	return proxy.SOCKS5("tcp", parsed.Host, nil, &net.Dialer{Timeout: timeout * time.Second})
 }
 
 func parse_proxy(proxy string) (*url.URL, error) {
