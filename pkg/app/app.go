@@ -31,8 +31,10 @@ func Run(){
 		return
 	}
 	// closing the connection after the test is done
-	client.Close()
-	conn.Close()
+	if conn != nil && client != nil {
+		client.Close()
+		conn.Close()
+	}
 	// starting a bruteforce attack
 	err = bruteforce.Start()
 	if err != nil {
