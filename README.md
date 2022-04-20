@@ -27,7 +27,9 @@
 - [x] Idea about `import` option where you can import config file with the custom name like `import: my_website.yml` <br>
       + added in commit: <a href="https://github.com/narukoshin/custom-bruteforce/commit/823b14f907ce92a44d69174510f681ba0da31c6e">`823b14f`</a><br>
       + changelog: <a href="https://github.com/narukoshin/custom-bruteforce/releases/tag/v2.3-beta">`v2.3-beta`</a>
-- [ ] Email notifications
+- [x] Email notifications <br>
+      + added in commit: <a href="https://github.com/narukoshin/custom-bruteforce/commit/a98c4631dd29cfcf6d50ef45bb5b1a98b67e3aa3">`a98c463`</a><br>
+      + changelog: <a href="https://github.com/narukoshin/custom-bruteforce/releases/tag/v2.4.3">`v2.4.3`</a>
 
 💭 If you have any suggestion about new features, please open a new issue with the enhancement label.
 
