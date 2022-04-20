@@ -25,16 +25,16 @@ func Run(){
 		return
 	}
 	// testing email server
-	if conn, client, err := email.Test_Connection(); err != nil {
-		if client != nil && conn != nil {
-			client.Close()
-			conn.Close()
-		}
+	conn, client, err := email.Test_Connection()
+	if err != nil {
 		fmt.Printf("error: email: %v\n", err)
 		return
 	}
+	// closing the connection after the test is done
+	client.Close()
+	conn.Close()
 	// starting a bruteforce attack
-	err := bruteforce.Start()
+	err = bruteforce.Start()
 	if err != nil {
 		fmt.Printf("error: %v\n", err)
 		return
