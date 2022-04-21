@@ -11,6 +11,11 @@
     <a target="_blank" href="https://instagram.com/naru.koshin"><img src="https://media1.giphy.com/media/Wu9Graz2W46frtHFKc/giphy.gif?cid=ecf05e47h46mbuhq40rgevni5rbxgadpw5icrr71vr9nu8d4&rid=giphy.gif&ct=s" width="120"></a>
   </div>
 </div>
+<h1>⚗ About this tool</h1>
+<p>I'm Naru Koshin and I'm the creator of this wonderful tool. If you are still wondering what this tool is for, why I spent so much time on creating it, and what you can do with it, then I will try to explain you as simply as possible.</p>
+<p>I'm studying and working as a penetration tester, IT Security analyst, call it as you want, I'm hacking servers, but most websites, okay?</p>
+<p>Most of the tools are pretty hard to use especially if you are hacking for many days. I don't like to write an automated code for every project that will run a hydra or any other tool that will brute-force passwords for me. And no, I'm not a script kiddie. I just don't like to type very long commands and then figure out why the heck the script is not working as I want. My tool is very simple to use and the config is easy to read. You can share a config file, you can store it for how long you need, etc.</p>
+<p>As I mentioned before, This tool is for brute-forcing aka cracking the website passwords. There's nothing difficult to understand. Just type the data about the website, and set your options, for example, you can send a password when it will be found to the email so you can leave this tool to work on your server or somewhere else.</p>
 <h1>📚 Getting started</h1>
 <p>To download this tool, type the command below:</p>
 
