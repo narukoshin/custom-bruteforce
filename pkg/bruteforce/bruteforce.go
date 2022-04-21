@@ -318,12 +318,8 @@ func _run_attack(pass string) error {
 
 		resp, err := client.Do(req)
 		if err != nil {
-			if strings.Contains(err.Error(), "timeout") {
-				// if there was a timeout error, repeating the same request again until it's successful.
-				_run_attack(pass)
-				return nil
-			}
-			return err
+			// if there was any error, repeating the same request again until it's successful.
+			_run_attack(pass)
 		}
 		defer resp.Body.Close()
 
