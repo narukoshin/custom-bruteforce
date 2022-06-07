@@ -1,0 +1,23 @@
+site:
+  host: <YOUR WP-LOGIN.PHP> # the url to the wordpress login page
+  method: POST
+
+bruteforce:
+  field: pwd
+  from: file
+  file: <YOUR WORDLIST> # the wordlist where passwords will be loaded from
+  threads: 5
+
+fields:
+  - name: log
+    value: <TARGET USER> # user that you want to attack
+
+headers:
+  - name: Content-Type
+    value: application/x-www-form-urlencoded; charset=utf-8
+
+  - name: User-Agent
+    value: Mozilla/5.0 (Windows NT 11.0; Win64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4861.185 Safari/537.36
+
+on_fail:
+  message: incorrect # change error message if the target wordpress page is in different language.
