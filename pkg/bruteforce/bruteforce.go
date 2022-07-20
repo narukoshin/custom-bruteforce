@@ -58,6 +58,8 @@ var (
 
 	Attack Attack_Result
 
+	Start_Time time.Time
+
 	// adding some error messages
 	ErrNoPasswords 				= errors.New("there is no passwords available for bruteforce, please specify some passwords")
 	ErrOpeningFile 				= errors.New("we have issues with opening a file, make sure that file exists and is readable")
@@ -177,6 +179,8 @@ func Dictionary() ([][]string, error) {
 
 // The function where all the magic happens
 func Start() error {
+	// starting the timer
+	Start_Time = time.Now()
 	// printing a message that no-verbose mode is enabled.
 	if NoVerbose {
 		fmt.Printf("\033[34m[~] Starting brute-force attack in no-verbose mode...\033[0m\n")
@@ -361,7 +365,9 @@ func _while_running(pass string){
 func _attack_finished() (err error){
 	// checking if the attack is stopped and the password is found
 	if Attack.Stop && Attack.Status == StatusFound  && Attack.Password != "" {
+		started := Start_Time.Format("2006-01-02 15:04:05")
 		fmt.Printf("\033[32m[~] the thing that you were looking for is found: %v\033[0m\n", Attack.Password)
+		fmt.Printf("\033[32m[~] elapsed time: %v, started %v\033[0m\n", time.Since(Start_Time), started)
 		// there we will save the password
 		WritePasswordToFile()
 		err = email.Send_Message(Attack.Password)
