@@ -73,18 +73,18 @@ func InstallUpdate() error {
 	// deleting an old binary file
 	err = os.Remove(path)
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
 	// creating a new binary file
 	fp, err := os.Create(path)
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
 	defer fp.Close()
 	// copying content from the github repository to the file
 	size, err := io.Copy(fp, resp.Body)
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
 	if size > 0 {
 		fmt.Println("Successfuly updated.")
