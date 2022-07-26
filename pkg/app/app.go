@@ -26,7 +26,7 @@ func Run(){
 					  return
 					}
 				case "update":
-					err := updater.InstallUpdate()
+					err := updater.InstallUpdate(Version)
 					if err != nil {
 						fmt.Printf("error: updater: %v\n", err)
 						return

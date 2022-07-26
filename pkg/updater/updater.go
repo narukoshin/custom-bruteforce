@@ -59,13 +59,20 @@ func CheckForUpdate(currentVersion string) (error) {
 	return nil
 }
 
-func InstallUpdate() error {
+func InstallUpdate(currentVersion string) error {
 	path, err := os.Executable()
 	if err != nil {
 		return err
 	}
 	// Reading the binary from the github repository
-	resp, err := http.Get(fmt.Sprintf(binariesf, system))
+	var gitFileName string
+	// adding .exe to the end if it's a Windows
+	if system == "windows" {
+		gitFileName = system + ".exe"
+	} else {
+		gitFileName = system
+	}
+	resp, err := http.Get(fmt.Sprintf(binariesf, gitFileName))
 	if err != nil {
 		return err
 	}
@@ -73,7 +80,11 @@ func InstallUpdate() error {
 	// deleting an old binary file
 	err = os.Remove(path)
 	if err != nil {
-		return err
+		// if we can't delete an existing file, then we will rename it and download a newer version.
+		err = os.Rename(path, fmt.Sprintf("%s.%s.bak", path, currentVersion))
+		if err != nil {
+		  return err
+		}
 	}
 	// creating a new binary file
 	fp, err := os.Create(path)
@@ -89,5 +100,6 @@ func InstallUpdate() error {
 	if size > 0 {
 		fmt.Println("Successfuly updated.")
 	}
+
 	return nil
 }
