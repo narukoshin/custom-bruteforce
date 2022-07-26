@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-const Version string = "v2.4.4"
+const Version string = "v2.4.3"
 
 func Run(){
 	// checking if there's any command used
@@ -20,6 +20,17 @@ func Run(){
 			switch command {
 				case "version":
 					fmt.Printf("Build version: %s\r\n", Version)
+					err := updater.CheckForUpdate(Version)
+					if err != nil {
+					  fmt.Printf("error: updater: %v\n", err)
+					  return
+					}
+				case "update":
+					err := updater.InstallUpdate()
+					if err != nil {
+						fmt.Printf("error: updater: %v\n", err)
+						return
+					  }
 			}
 			return
 		}
