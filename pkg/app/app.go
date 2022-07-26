@@ -1,14 +1,29 @@
 package app
 
 import (
-	"custom-bruteforce/pkg/config"
 	"custom-bruteforce/pkg/bruteforce"
-	"custom-bruteforce/pkg/site"
+	"custom-bruteforce/pkg/updater"
+	"custom-bruteforce/pkg/config"
 	"custom-bruteforce/pkg/email"
+	"custom-bruteforce/pkg/site"
 	"fmt"
+	"os"
 )
 
+const Version string = "v2.4.4"
+
 func Run(){
+	// checking if there's any command used
+	{
+		if len(os.Args) != 1 {
+			command := os.Args[1]
+			switch command {
+				case "version":
+					fmt.Printf("Build version: %s\r\n", Version)
+			}
+			return
+		}
+	}
 	// verifying the config
 	if err := config.HasError(); err != nil {
 		fmt.Printf("error: %v\n", err)
