@@ -8,18 +8,21 @@ import (
 	"os"
 )
 
+// the default config name that we will load.
 const YAMLFile string = "config.yml"
 
-var YAMLConfig structs.YAMLConfig
+var (
+	YAMLConfig structs.YAMLConfig
 
-// Handling errors
-var CError error = nil
+	// Handling errors
+	CError error = nil
 
-// Error message if the config file is not found
-var ErrConfigNotFound = errors.New("config file not found, please create it to use this tool")
+	// Error message if the config file is not found
+	ErrConfigNotFound = errors.New("config file not found, please create it to use this tool")
 
-// Error message if the config file is empty
-var ErrConfigIsEmpty = errors.New("config file is empty")
+	// Error message if the config file is empty
+	ErrConfigIsEmpty = errors.New("config file is empty")
+)
 
 func init(){
 	yml := load_file(YAMLFile)
