@@ -19,11 +19,16 @@ func Run(){
 			command := os.Args[1]
 			switch command {
 				case "version":
-					fmt.Printf("Build version: %s\r\n", Version)
-					err := updater.CheckForUpdate(Version)
-					if err != nil {
-					  fmt.Printf("error: updater: %v\n", err)
-					  return
+					fmt.Printf("\033[33mBuild version: %s\033[0m\r\n", Version)
+					if updates, err := updater.CheckForUpdate(Version); err == nil {
+						if (updater.HasUpdatesToInstall{}) != updates {
+							fmt.Printf("\033[31mNewer version available to install: %v\033[0m\n\033[36mUse %v update - to install an update\033[0m\r\n", updates.LatestVersion, updates.ExecutableName)
+						} else {
+							fmt.Println("You already has the latest version")
+						}
+					} else {
+						fmt.Printf("error: updater: %v\n", err)
+						return
 					}
 				case "update":
 					err := updater.InstallUpdate(Version)
@@ -33,6 +38,12 @@ func Run(){
 					  }
 			}
 			return
+		}
+		// checking for update if we are running a tool
+		if update, err := updater.CheckForUpdate(Version); err == nil {
+			if (updater.HasUpdatesToInstall{}) != update {
+				fmt.Printf("\033[31m[!] There's a new update available to install, to update run \"%v update\"\r\n\033[0m", update.ExecutableName)
+			}
 		}
 	}
 	// verifying the config

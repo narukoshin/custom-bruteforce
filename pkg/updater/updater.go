@@ -24,82 +24,98 @@ type Release struct {
 	Prerelease bool   `json:"prerelease"`
 }
 
-func CheckForUpdate(currentVersion string) (error) {
+type HasUpdatesToInstall struct {
+	LatestVersion string
+	ExecutableName string
+}
+
+
+func CheckForUpdate(currentVersion string) (HasUpdatesToInstall, error) {
 	resp, err := http.Get(api_endpoint)
 	if err != nil {
-		return err
+		return HasUpdatesToInstall{}, err
 	}
 	defer resp.Body.Close()
 	
 	if resp.StatusCode == http.StatusOK {
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return err
+			return HasUpdatesToInstall{}, err
 		}
 		releases := []Release{}
 		err = json.Unmarshal(body, &releases)
 		if err != nil {
-			return err
+			return HasUpdatesToInstall{}, err
 		}
 		// checking if there is any release to avoid errors in future
 		if len(releases) > 0 {
 			// latest release
 			Latest = releases[0]
 			if currentVersion == Latest.Version {
-				fmt.Println("You already have the latest version")
+				return HasUpdatesToInstall{}, nil
 			} else {
 				path, err := os.Executable()
 				if err != nil {
-					return err
+					return HasUpdatesToInstall{}, err
 				}
-				fmt.Printf("Latest available: %v\nUse %v update - to install the update\r\n", Latest.Version, filepath.Base(path))
+				updates := HasUpdatesToInstall {
+					LatestVersion: Latest.Version,
+					ExecutableName: filepath.Base(path),
+				}
+				return updates, nil
 			}
 		}
 	}
-	return nil
+	return HasUpdatesToInstall{}, nil
 }
 
 func InstallUpdate(currentVersion string) error {
-	path, err := os.Executable()
-	if err != nil {
-		return err
-	}
-	// Reading the binary from the github repository
-	var gitFileName string
-	// adding .exe to the end if it's a Windows
-	if system == "windows" {
-		gitFileName = system + ".exe"
-	} else {
-		gitFileName = system
-	}
-	resp, err := http.Get(fmt.Sprintf(binariesf, gitFileName))
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	// deleting an old binary file
-	err = os.Remove(path)
-	if err != nil {
-		// if we can't delete an existing file, then we will rename it and download a newer version.
-		err = os.Rename(path, fmt.Sprintf("%s.%s.bak", path, currentVersion))
-		if err != nil {
-		  return err
+	// checking if there is an update to install
+	if updates, err := CheckForUpdate(currentVersion); err == nil {
+		if (HasUpdatesToInstall{}) != updates {
+			path, err := os.Executable()
+			if err != nil {
+				return err
+			}
+			// Reading the binary from the github repository
+			var gitFileName string
+			// adding .exe to the end if it's a Windows
+			if system == "windows" {
+				gitFileName = system + ".exe"
+			} else {
+				gitFileName = system
+			}
+			resp, err := http.Get(fmt.Sprintf(binariesf, gitFileName))
+			if err != nil {
+				return err
+			}
+			defer resp.Body.Close()
+			// deleting an old binary file
+			err = os.Remove(path)
+			if err != nil {
+				// if we can't delete an existing file, then we will rename it and download a newer version.
+				err = os.Rename(path, fmt.Sprintf("%s.%s.bak", path, currentVersion))
+				if err != nil {
+				return err
+				}
+			}
+			// creating a new binary file
+			fp, err := os.Create(path)
+			if err != nil {
+				return err
+			}
+			defer fp.Close()
+			// copying content from the github repository to the file
+			size, err := io.Copy(fp, resp.Body)
+			if err != nil {
+				return err
+			}
+			if size > 0 {
+				fmt.Println("\033[32m[-] Latest version has been downloaded and replaced,\n please verify version with a version check command.\033[0m")
+			}
+		} else {
+			fmt.Println("You already has the latest version")
 		}
 	}
-	// creating a new binary file
-	fp, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer fp.Close()
-	// copying content from the github repository to the file
-	size, err := io.Copy(fp, resp.Body)
-	if err != nil {
-		return err
-	}
-	if size > 0 {
-		fmt.Println("Successfuly updated.")
-	}
-
 	return nil
 }
