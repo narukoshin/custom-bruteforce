@@ -55,7 +55,7 @@ mv config.sample.yml config.yml
 <p>Next, you need to fill the config file with the information about your target to brute-force.</p>
 
 ```yaml
-config.yml
+#config.yml
 
 # you can import another config file with custom name, for example, my-project.yml
 import: my-project.yml
@@ -93,7 +93,7 @@ bruteforce:
 ```
 
 ```yaml
-config.yml
+#config.yml
 
     # Next, you need to specify how many threads you want to use. The default value is 5
     threads: 30
