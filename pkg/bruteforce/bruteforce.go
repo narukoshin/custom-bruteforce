@@ -1,15 +1,16 @@
 package bruteforce
 
 import (
+	"bufio"
 	"bytes"
 	"crypto/tls"
 	"custom-bruteforce/pkg/config"
 	"custom-bruteforce/pkg/custom"
+	"custom-bruteforce/pkg/email"
 	"custom-bruteforce/pkg/headers"
 	"custom-bruteforce/pkg/proxy"
 	"custom-bruteforce/pkg/site"
 	"custom-bruteforce/pkg/structs"
-	"custom-bruteforce/pkg/email"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -18,6 +19,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"os"
 	"regexp"
 	"runtime"
 	"strings"
@@ -103,15 +105,6 @@ func Dictionary() ([][]string, error) {
 			contents, err := ioutil.ReadFile(File)
 			if err != nil {
 				return nil, ErrOpeningFile
-			}
-			wordlist = strings.Split(string(contents), "\n")
-		case "stdin":
-			if runtime.GOOS == "windows" {
-				return nil, ErrUnixRequired
-			}
-			contents, err := ioutil.ReadFile("/dev/stdin")
-			if err != nil {
-			  return nil, ErrOpeningFile
 			}
 			wordlist = strings.Split(string(contents), "\n")
 	}
@@ -200,44 +193,62 @@ func Start() error {
 	if OPStatusCode == 0 {
 		OPStatusCode = http.StatusOK
 	}
+	if From == "stdin" {
+		if runtime.GOOS == "windows" {
+			return ErrUnixRequired
+		}
+		file, err := os.Open("/dev/stdin")
+		if err != nil {
+			fmt.Printf("error: %v\n", err)
+		}
+		defer file.Close()
 
-	// loading wordlist
-	wordlist, err := Dictionary()
-	if err != nil {
-		return err
-	}
-	// making sure that user specified the field that he wants to bruteforce
-	if len(Field) == 0 {
-		return ErrEmptyField
-	}
-	var wg sync.WaitGroup
-	// adding +1 job
-	wg.Add(len(wordlist))
-	// starting reading the wordlist
-	for _, w := range wordlist {
-		// adding goroutine to run each thread in sync
-		go func(w []string) {
-			// finishing the job
-			defer wg.Done()
-			// finally reading the passwords
-			for _, pass := range w {
-				// launching attacks for next steps
-				err := _run_attack(pass)
-				if err != nil {
-					fmt.Printf("error: %v\n", err)
-				}
-				// TODO: Handle error message from the attack function
-				if Attack.Stop {
-					// deleting the wordlist to stop the threads
-					wordlist = [][]string{}
-					return
-				}
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			err := _run_attack(scanner.Text())
+			if err != nil {
+				fmt.Printf("error: %v\n", err)
 			}
-		}(w)
+		}
+	} else {
+		// loading wordlist
+		wordlist, err := Dictionary()
+		if err != nil {
+			return err
+		}
+		// making sure that user specified the field that he wants to bruteforce
+		if len(Field) == 0 {
+			return ErrEmptyField
+		}
+		var wg sync.WaitGroup
+		// adding +1 job
+		wg.Add(len(wordlist))
+		// starting reading the wordlist
+		for _, w := range wordlist {
+			// adding goroutine to run each thread in sync
+			go func(w []string) {
+				// finishing the job
+				defer wg.Done()
+				// finally reading the passwords
+				for _, pass := range w {
+					// launching attacks for next steps
+					err := _run_attack(pass)
+					if err != nil {
+						fmt.Printf("error: %v\n", err)
+					}
+					// TODO: Handle error message from the attack function
+					if Attack.Stop {
+						// deleting the wordlist to stop the threads
+						wordlist = [][]string{}
+						return
+					}
+				}
+			}(w)
+		}
+		wg.Wait()
 	}
-	wg.Wait()
 	// When the script stopped working, this will be printed out
-	err = _attack_finished()
+	err := _attack_finished()
 	if err != nil {
 		return err
 	}
