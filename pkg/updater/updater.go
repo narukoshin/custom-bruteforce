@@ -73,6 +73,7 @@ func InstallUpdate(currentVersion string) error {
 	// checking if there is an update to install
 	if updates, err := CheckForUpdate(currentVersion); err == nil {
 		if (HasUpdatesToInstall{}) != updates {
+			fmt.Printf("\033[36m[-] Starting update...\033[0m")
 			path, err := os.Executable()
 			if err != nil {
 				return err
@@ -112,6 +113,11 @@ func InstallUpdate(currentVersion string) error {
 			}
 			if size > 0 {
 				fmt.Println("\033[32m[-] Latest version has been downloaded and replaced,\n please verify version with a version check command.\033[0m")
+			}
+			// making it executable
+			err = fp.Chmod(0544)
+			if err != nil {
+				return err
 			}
 		} else {
 			fmt.Println("You already has the latest version")
