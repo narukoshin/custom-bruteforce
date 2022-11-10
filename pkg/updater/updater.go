@@ -73,7 +73,7 @@ func InstallUpdate(currentVersion string) error {
 	// checking if there is an update to install
 	if updates, err := CheckForUpdate(currentVersion); err == nil {
 		if (HasUpdatesToInstall{}) != updates {
-			fmt.Printf("\033[36m[-] Starting update...\033[0m")
+			fmt.Printf("\033[36m[-] Starting update...\n\033[0m")
 			path, err := os.Executable()
 			if err != nil {
 				return err
