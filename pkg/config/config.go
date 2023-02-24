@@ -2,9 +2,10 @@ package config
 
 import (
 	"custom-bruteforce/pkg/structs"
+	"errors"
+	"fmt"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
-	"errors"
 	"os"
 )
 
@@ -22,9 +23,13 @@ var (
 
 	// Error message if the config file is empty
 	ErrConfigIsEmpty = errors.New("config file is empty")
+
+	// Error message if the include file doesn't exist
+	// Almost duplication of ErrConfigNotFound
+	ErrIncludeNotFound = errors.New("One or more include files not found")
 )
 
-func init(){
+func init() {
 	yml := load_file(YAMLFile)
 	err := yaml.Unmarshal(yml, &YAMLConfig)
 	if err != nil {
@@ -42,6 +47,26 @@ func init(){
 			return
 		}
 	}
+	// Including config by parts
+	if len(YAMLConfig.Include) != 0 {
+		// Because include option is an array
+		// We need to iterate through it
+		for _, inc := range YAMLConfig.Include {
+			// Trying to read the file and load it.
+			yml = load_file(inc)
+			// If any of include files doesn't exist
+			// Returning an error message
+			if CError == ErrConfigNotFound {
+				CError = ErrIncludeNotFound
+			}
+			err = yaml.Unmarshal(yml, &YAMLConfig)
+			if err != nil {
+				CError = err
+				return
+			}
+		}
+	}
+	fmt.Println(YAMLConfig)
 }
 
 func load_file(file_name string) []byte {

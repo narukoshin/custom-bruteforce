@@ -2,40 +2,40 @@ package app
 
 import (
 	"custom-bruteforce/pkg/bruteforce"
-	"custom-bruteforce/pkg/updater"
 	"custom-bruteforce/pkg/config"
 	"custom-bruteforce/pkg/email"
 	"custom-bruteforce/pkg/site"
+	"custom-bruteforce/pkg/updater"
 	"fmt"
 	"os"
 )
 
 const Version string = "v2.4.7a"
 
-func Run(){
+func Run() {
 	// checking if there's any command used
 	{
 		if len(os.Args) != 1 {
 			command := os.Args[1]
 			switch command {
-				case "version":
-					fmt.Printf("\033[33mBuild version: %s\033[0m\r\n", Version)
-					if updates, err := updater.CheckForUpdate(Version); err == nil {
-						if (updater.HasUpdatesToInstall{}) != updates {
-							fmt.Printf("\033[31mNewer version available to install: %v\033[0m\n\033[36mUse %v update - to install an update\033[0m\r\n", updates.LatestVersion, updates.ExecutableName)
-						} else {
-							fmt.Println("You already has the latest version")
-						}
+			case "version":
+				fmt.Printf("\033[33mBuild version: %s\033[0m\r\n", Version)
+				if updates, err := updater.CheckForUpdate(Version); err == nil {
+					if (updater.HasUpdatesToInstall{}) != updates {
+						fmt.Printf("\033[31mNewer version available to install: %v\033[0m\n\033[36mUse %v update - to install an update\033[0m\r\n", updates.LatestVersion, updates.ExecutableName)
 					} else {
-						fmt.Printf("error: updater: %v\n", err)
-						return
+						fmt.Println("You already has the latest version")
 					}
-				case "update":
-					err := updater.InstallUpdate(Version)
-					if err != nil {
-						fmt.Printf("error: updater: %v\n", err)
-						return
-					  }
+				} else {
+					fmt.Printf("error: updater: %v\n", err)
+					return
+				}
+			case "update":
+				err := updater.InstallUpdate(Version)
+				if err != nil {
+					fmt.Printf("error: updater: %v\n", err)
+					return
+				}
 			}
 			return
 		}
