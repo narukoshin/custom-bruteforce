@@ -2,6 +2,11 @@
 # this file will be ignored then and the config will be loaded from this option
 import: example.yml # optional
 
+# You can also include config by separate files
+include:
+  - file1.yml
+  - website.com/file2.yml
+
 site: # required
   host: https://www.narukoshin.me/login # required
   method: POST # required
