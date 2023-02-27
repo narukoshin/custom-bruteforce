@@ -3,7 +3,6 @@ package config
 import (
 	"custom-bruteforce/pkg/structs"
 	"errors"
-	"fmt"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"os"
@@ -66,7 +65,6 @@ func init() {
 			}
 		}
 	}
-	fmt.Println(YAMLConfig)
 }
 
 func load_file(file_name string) []byte {
