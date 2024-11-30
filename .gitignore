@@ -9,5 +9,6 @@
 !README.md
 !templates
 !pkg
+!pkg/**
 !bin
 !config.sample.yml
