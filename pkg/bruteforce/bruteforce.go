@@ -81,6 +81,13 @@ type Attack_Result struct {
 	ErrorMessage string
 }
 
+type Attack_Fail struct {
+	Password string
+	Try_count int
+}
+
+var AttackFail Attack_Fail
+
 // verifying if the list type is correct, currently there is only two types available - file and list
 func verify_type() bool{
 	for _, t := range Types_Available {
@@ -211,6 +218,9 @@ func Start() error {
 			}
 		}
 	} else {
+		if Debug {
+			fmt.Println("Reading wordlist...")
+		}
 		// loading wordlist
 		wordlist, err := Dictionary()
 		if err != nil {
@@ -224,6 +234,9 @@ func Start() error {
 		// adding +1 job
 		wg.Add(len(wordlist))
 		// starting reading the wordlist
+		if Debug {
+			fmt.Println("Launching attack")
+		}
 		for _, w := range wordlist {
 			// adding goroutine to run each thread in sync
 			go func(w []string) {
@@ -315,6 +328,11 @@ func _run_attack(pass string) error {
 			return err
 		}
 		defer req.Body.Close()
+
+		if Debug {
+			fmt.Printf("Request_RAW: %v\n", req)
+		}
+
 		if headers.Is() {
 			for _, header := range headers.Get(){
 				req.Header.Set(header.Name, header.Value)
@@ -332,15 +350,46 @@ func _run_attack(pass string) error {
 		}
 
 		resp, err := client.Do(req)
+
+		if pass == "hY7j8Kl1p2" && AttackFail.Try_count != 7 {
+			err = errors.New("Test for failed request")
+		}
+
 		if err != nil {
 			// if there was any error, repeating the same request again until it's successful.
+
+			AttackFail.Password = pass
+			AttackFail.Try_count++
+
+			if Debug {
+				fmt.Printf("Request was unsuccessful, repeating...%d\n", AttackFail.Try_count)
+			}
+
+			if AttackFail.Try_count == 10 {
+                Attack = Attack_Result {Status: StatusFinished, Stop: true, ErrorMessage: fmt.Sprintf("Something went wrong: Password try: %v", AttackFail)}
+				return nil
+			}
+
 			_run_attack(pass)
 		}
+		// Resetting fail count in case it recovered and moved to other passwords.
+		AttackFail = Attack_Fail{}
 		defer resp.Body.Close()
 
+		if Debug {
+			fmt.Println(resp)
+		}
+
 		// if server says that page doesn't exists then we are stopping the script.
-		// that would be a good idea to add an ignore option for this.
+		// TODO: that would be a good idea to add an ignore option for this.
 		if resp.StatusCode == http.StatusNotFound{
+			if Debug {
+				body, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					return err
+				}
+				fmt.Println(string(body))
+			}
 			Attack = Attack_Result {Status: StatusFinished, Stop: true, ErrorMessage: "The server says 404"}
 			return nil
 		} else {
