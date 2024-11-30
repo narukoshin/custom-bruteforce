@@ -51,7 +51,7 @@ func CheckForUpdate(currentVersion string) (HasUpdatesToInstall, error) {
 		if len(releases) > 0 {
 			// latest release
 			Latest = releases[0]
-			if currentVersion == Latest.Version {
+			if currentVersion >= Latest.Version {
 				return HasUpdatesToInstall{}, nil
 			} else {
 				path, err := os.Executable()
