@@ -1,0 +1,13 @@
+# Deny-list
+*
+
+# Allow-list
+!.gitignore
+!go.mod
+!go.sum
+!main.go
+!README.md
+!templates
+!pkg
+!bin
+!config.sample.yml
