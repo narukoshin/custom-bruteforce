@@ -350,11 +350,6 @@ func _run_attack(pass string) error {
 		}
 
 		resp, err := client.Do(req)
-
-		if pass == "hY7j8Kl1p2" && AttackFail.Try_count != 7 {
-			err = errors.New("Test for failed request")
-		}
-
 		if err != nil {
 			// if there was any error, repeating the same request again until it's successful.
 
