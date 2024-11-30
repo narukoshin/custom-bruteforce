@@ -16,6 +16,10 @@ bin_folder="bin"
 release_folder="./release"
 sample_config="config.sample.yml"
 
+if [ ! -d "$release_folder" ]; then
+    mkdir "$release_folder"
+fi
+
 echo "* Started compiling binaries"
 GOOS=windows go build -o ${bin_folder}/windows.exe main.go
 GOOS=darwin go build -o ${bin_folder}/darwin main.go
