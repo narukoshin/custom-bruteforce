@@ -7,18 +7,17 @@
   <img src="https://img.shields.io/github/contributors/narukoshin/custom-bruteforce">
   <br><br>
   <div>
-    <a target="_blank" href="https://twitter.com/narukoshin"><img src="https://media4.giphy.com/media/iFUiSYMNPvIJZDpMKN/giphy.gif?cid=ecf05e471v5jn6vuhczu1tflu2wm7qt11atwybfwcgaqxz38&rid=giphy.gif&ct=s" align="middle" width="120"></a>
-    <a target="_blank" href="https://instagram.com/naru.koshin"><img src="https://media1.giphy.com/media/Wu9Graz2W46frtHFKc/giphy.gif?cid=ecf05e47h46mbuhq40rgevni5rbxgadpw5icrr71vr9nu8d4&rid=giphy.gif&ct=s" align="middle" width="120"></a>
-    <a target="_blank" href="https://tryhackme.com/p/narukoshin"><img align="middle" src="https://www.secjuice.com/content/images/2019/01/TryHackMe-logo---small.png" width="120"></a>
+    <a target="_blank" href="https://twitter.com/enkosan_p"><img src="https://media4.giphy.com/media/iFUiSYMNPvIJZDpMKN/giphy.gif?cid=ecf05e471v5jn6vuhczu1tflu2wm7qt11atwybfwcgaqxz38&rid=giphy.gif&ct=s" align="middle" width="120"></a>
+    <a target="_blank" href="https://instagram.com/enko.san"><img src="https://media1.giphy.com/media/Wu9Graz2W46frtHFKc/giphy.gif?cid=ecf05e47h46mbuhq40rgevni5rbxgadpw5icrr71vr9nu8d4&rid=giphy.gif&ct=s" align="middle" width="120"></a>
   </div>
 </div>
 <h1>⚗ About this tool</h1>
-<p>I'm Naru Koshin and I'm the creator of this wonderful tool. If you are still wondering what this tool is for, why I spent so much time on creating it, and what you can do with it, then I will try to explain you as simply as possible.</p>
-<p>I'm studying and working as a penetration tester, IT Security analyst, call it as you want, I'm hacking servers, but most websites, okay?</p>
-<p>Most of the tools are pretty hard to use especially if you are hacking for many days. I don't like to write an automated code for every project that will run a hydra or any other tool that will brute-force passwords for me. And no, I'm not a script kiddie. I just don't like to type very long commands and then figure out why the heck the script is not working as I want. My tool is very simple to use and the config is easy to read. You can share a config file, you can store it for how long you need, etc.</p>
+<p>I'm Naru Koshin the creator of this wonderful tool. If you are still wondering what this tool is for, why I spent so much time on creating it, and what you can do with it, then I will try to explain you as simply as possible.</p>
+<p>I'm studying and working as a penetration tester, and IT Security analyst, call it as you want, I'm hacking servers, but most websites, okay?</p>
+<p>Most of the tools are pretty hard to use especially if you are hacking for many days. I don't like to write automated code for every project that will run a Hydra or any other tool that will brute-force passwords for me. And no, I'm not a script kiddie. I just don't like to type very long commands and then figure out why the heck the script is not working as I want. My tool is very simple to use and the config is easy to read. You can share a config file, you can store it for how long you need, etc.</p>
 <p>As I mentioned before, This tool is for brute-forcing aka cracking the website passwords. There's nothing difficult to understand. Just type the data about the website, and set your options, for example, you can send a password when it will be found to the email so you can leave this tool to work on your server or somewhere else.</p>
 <p>Why I'm spending this tool so much of my time? The reason is simple. I just want to crack passwords gently. Write the config, check the config, everything looks fine, start it, and wait for the password. I know how my tool works better than anyone else. If there is any bug, I'm fixing it.. or at least trying to fix it. In the previous release, I added a new awesome feature - Getting passwords in an email. This will be very useful when I'm working with the team.</p>
-<p>Yes, my tool works only on websites, but it's still better than hydra. 😂 For other protocols I'm using Ncrack.</p>
+<p>Yes, my tool works only on websites, but it's still better than Hydra. 😂 For other protocols I'm using Ncrack.</p>
 <h1>📚 Getting started</h1>
 <p>To download this tool, type the command below:</p>
 
@@ -57,9 +56,9 @@ mv config.sample.yml config.yml
 ```yaml
 #config.yml
 
-# you can import another config file with custom name, for example, my-project.yml
+# You can import another config file with a custom name, for example, my-project.yml
 import: my-project.yml
-# after import, following lines will be ignored.
+# after import, the following lines will be ignored.
 
 # You can also include config by separate files
 include:
@@ -72,7 +71,7 @@ site:
 bruteforce:
     field: password # the field that you want to brute-force (important)
     
-    # there is 3 ways from where you can load a wordlist
+    # There are 3 ways from where you can load a wordlist
     # method 1 - from the file
     from: file
     file: /usr/share/wordlists/rockyou.txt # the path, where is your wordlist located at
@@ -126,7 +125,7 @@ fields:
       value: admin
       
 # Adding error message if the password is incorrect
-# p.s. this will be ignored if you will add on_pass option
+# p.s. This will be ignored if you add on_pass option
 on_fail:
     message: incorrect password
     status_code: 401 # default value is 0
@@ -136,10 +135,10 @@ on_pass:
     message: Welcome, 
     status_code: 200 # default value is 200
     
-# And the last cherry of this tool is crawl option
+# And the last cherry of this tool is the crawl option
 # This option can help you find the token if there is any and will add it to your request
 crawl:
-    url: <token-url> # if the token is not located in the original request, then we will set a new one to get the token
+    url: <token-url> # If the token is not located in the original request, then we will set a new one to get the token
     name: token # the name of the field where the token will be passed to the request
     search: "token = '([a-z0-9]{32})" # to find the token, use regex
 
@@ -167,7 +166,7 @@ email:
       - another.email@address.com
       - random.email@address.com
     subject: Your subject text is here
-    name: Who Am I ?
+    name: Who Am I?
     message: "Password: <password>" # a real password will appear in <password> place.
 ```
 <p>And that's it, now you are a professional cracker.</p>
