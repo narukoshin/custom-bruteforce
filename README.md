@@ -1,5 +1,5 @@
-<img src="https://c.tenor.com/gOP4dRPvzWcAAAAi/angry-mafumafu.gif" align="right" width="160">
 <h1>🧪 A little bit different brute-force tool</h1>
+<img src="https://c.tenor.com/gOP4dRPvzWcAAAAi/angry-mafumafu.gif" align="right" width="160">
 <div>
   <img src="https://img.shields.io/github/go-mod/go-version/narukoshin/custom-bruteforce">
   <img src="https://img.shields.io/github/v/release/narukoshin/custom-bruteforce">
