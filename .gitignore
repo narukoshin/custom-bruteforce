@@ -10,5 +10,4 @@
 !templates
 !pkg
 !pkg/**
-!bin
 !config.sample.yml
