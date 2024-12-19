@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-const Version string = "v2.5"
+const Version string = "v2.5.1"
 
 func Run() {
 	// checking if there's any command used
