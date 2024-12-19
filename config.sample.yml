@@ -35,6 +35,12 @@ bruteforce: # required
   
   threads: 20 # optional | default: 5
 
+  # add a custom code to the request
+  plugin: plugins/my-plugin/my-plugin.so # optional
+
+  # print debug messages
+  debug: true # optional
+
 headers: # optional
   - name: User-Agent
     value: "Mozilla/5.0 (Macintosh; Intel Mac OS)"
