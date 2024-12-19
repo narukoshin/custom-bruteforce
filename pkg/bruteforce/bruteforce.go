@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"custom-bruteforce/pkg/config"
-	"custom-bruteforce/pkg/custom"
+	"custom-bruteforce/pkg/middleware"
 	"custom-bruteforce/pkg/email"
 	"custom-bruteforce/pkg/headers"
 	"custom-bruteforce/pkg/proxy"
@@ -339,16 +339,15 @@ func _run_attack(pass string) error {
 			}
 		}
 
-		// custom code starts here
-		custom := custom.Middleware {
+		middleware := middleware.Middleware {
 			Client: &client,
 			Request: req,
 		}
-		err = custom.Do()
+		err = middleware.Do()
 		if err != nil {
-			return err
+			Attack = Attack_Result {Status: StatusFinished, Stop: true, ErrorMessage: err.Error()}
+			return nil
 		}
-
 		resp, err := client.Do(req)
 		if err != nil {
 			// if there was any error, repeating the same request again until it's successful.

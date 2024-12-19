@@ -14,6 +14,7 @@ type YAMLBruteforce struct {
 	NoVerbose bool     `yaml:"no_verbose"`
 	Output    string   `yaml:"output"`
 	Debug     bool     `yaml:"debug"`
+	Plugin	  string   `yaml:"plugin"`
 }
 
 type YAMLSite struct {
