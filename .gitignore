@@ -11,3 +11,8 @@
 !pkg
 !pkg/**
 !config.sample.yml
+!plugins
+!plugins/**
+
+# Afterallow deny-list
+plugins/**/*.so
