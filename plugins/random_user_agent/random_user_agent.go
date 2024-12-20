@@ -26,6 +26,10 @@ var (
     }
 )
 
+func init(){
+	rand.Seed(time.Now().UnixNano())
+}
+
 func RandomUserAgent() string {
 	rand.Shuffle(len(UserAgents), func(i, j int) {
 		UserAgents[i], UserAgents[j] = UserAgents[j], UserAgents[i]
@@ -34,7 +38,6 @@ func RandomUserAgent() string {
 }
 
 func (p UserAgentPlugin) Run(m *middleware.Middleware) error {
-	rand.Seed(time.Now().UnixNano())
 	m.Request.Header.Set("User-Agent", RandomUserAgent())
 	return nil
 }
