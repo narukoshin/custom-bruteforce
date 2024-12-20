@@ -1,4 +1,7 @@
-<h1>🧪 A little bit different brute-force tool</h1>
+# 🧪 Enraijin
+
+*A little bit different brute-force tool.*
+  
 <img src="https://c.tenor.com/gOP4dRPvzWcAAAAi/angry-mafumafu.gif" align="right" width="160">
 <div>
   <img src="https://img.shields.io/github/go-mod/go-version/narukoshin/custom-bruteforce">
