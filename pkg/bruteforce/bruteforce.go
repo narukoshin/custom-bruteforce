@@ -329,10 +329,6 @@ func _run_attack(pass string) error {
 		}
 		defer req.Body.Close()
 
-		if Debug {
-			fmt.Printf("Request_RAW: %v\n", req)
-		}
-
 		if headers.Is() {
 			for _, header := range headers.Get(){
 				req.Header.Set(header.Name, header.Value)
@@ -348,6 +344,11 @@ func _run_attack(pass string) error {
 			Attack = Attack_Result {Status: StatusFinished, Stop: true, ErrorMessage: err.Error()}
 			return nil
 		}
+
+		if Debug {
+			fmt.Printf("Request_RAW: %v\n", req)
+		}
+
 		resp, err := client.Do(req)
 		if err != nil {
 			// if there was any error, repeating the same request again until it's successful.
