@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-const Version string = "v2.5.2-dev.1"
+const Version string = "v2.5.2-dev.2"
 
 func Run() {
 	// checking if there's any command used
@@ -23,8 +23,6 @@ func Run() {
 				if updates, err := updater.CheckForUpdate(Version); err == nil {
 					if updates.LatestVersion != "" {
 						fmt.Printf("\033[31mNewer version available to install: %v\033[0m\n\033[36mUse %v update - to install an update\033[0m\r\n", updates.LatestVersion, updates.ExecutableName)
-					} else {
-						fmt.Println("You already has the latest version")
 					}
 				} else {
 					fmt.Printf("error: updater: %v\n", err)

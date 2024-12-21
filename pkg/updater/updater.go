@@ -73,7 +73,6 @@ func Get_Release() (Release, error) {
 		if len(releases) == 0 {
 			return Release{}, fmt.Errorf("couldn't get information about latest releases.")
 		}
-
 		for _, release := range releases {
 			if !release.Prerelease {
 				return release, nil
@@ -84,6 +83,7 @@ func Get_Release() (Release, error) {
 }
 
 func CheckForUpdate(currentVersion string) (HasUpdatesToInstall, error) {
+	fmt.Printf("\033[36m[-] Checking version...\n\033[0m")
 	release, err := Get_Release()
 	if err != nil {
 		return HasUpdatesToInstall{}, err
@@ -109,6 +109,7 @@ func CheckForUpdate(currentVersion string) (HasUpdatesToInstall, error) {
 			Assets: release.Assets,
 		}, nil
 	}
+	fmt.Printf("\033[39m[+] You already have the latest available version installed...\n\033[0m")
 	return HasUpdatesToInstall{}, nil
 }
 
@@ -131,7 +132,7 @@ func SelectAsset(assets []Release_Asset) (Release_Asset, error)  {
 func InstallUpdate(currentVersion string) error {
 	if updates, err := CheckForUpdate(currentVersion); err == nil {
 		if updates.LatestVersion != "" {
-			fmt.Printf("\033[36m[-] Checking version...\n\033[0m")
+			var updateSuccess bool = false
 			asset, err := SelectAsset(updates.Assets)
 			if err != nil {
 				return err
@@ -142,7 +143,13 @@ func InstallUpdate(currentVersion string) error {
 			if err != nil {
 				return err
 			}
-			defer os.RemoveAll(tempDir)
+			defer func(){
+				fmt.Printf("\033[36m[-] Cleaning up...\n\033[0m")
+				os.RemoveAll(tempDir)
+				if updateSuccess {
+					fmt.Printf("\033[36m[-] Wishing good hacking :PP - ENKO\n\033[0m")
+				}
+			}()
 			fmt.Printf("\033[36m[-] Creating a working directory at %s...\n\033[0m", tempDir)
 			fmt.Printf("\033[36m[-] Downloading an archive %s...\n\033[0m", asset.Name)
 			tempFile, err := os.Create(filepath.Join(tempDir, asset.Name))
@@ -190,8 +197,6 @@ func InstallUpdate(currentVersion string) error {
 				return fmt.Errorf("Meow! It looks like you're trying to run the update with `go run`. Please use the compiled binary instead.")
 			}
 
-			var updateSuccess bool = false
-
 			currentBinaryBak := filepath.Join(currDir, fmt.Sprintf("%s_%s", updates.LatestVersion, updates.ExecutableName))
 			err = os.Rename(currentBinary, currentBinaryBak)
 			if err != nil {
@@ -200,6 +205,9 @@ func InstallUpdate(currentVersion string) error {
 			defer func() {
 				if updateSuccess {
 					os.Remove(currentBinaryBak)
+					if platform == "windows" {
+						fmt.Printf("\033[39m[+] Because you are a Windows user and the binary is locked, I kindly ask you to manually delete the %s binary file...\n\033[0m", currentBinaryBak)
+					}
 				} else {
 					os.Rename(currentBinaryBak, currentBinary)
 				}
@@ -226,10 +234,9 @@ func InstallUpdate(currentVersion string) error {
 			if wb < 0 {
 				return fmt.Errorf("failed to copy binary file, written bytes: %d", wb)
 			}
-			fmt.Printf("\033[36m[-] The binary successfuly updated...\n\033[0m")
 			updateSuccess = true
-			fmt.Printf("\033[36m[-] Cleaning up...\n\033[0m")
+			fmt.Printf("\033[36m[-] The binary successfuly updated...\n\033[0m")
 		}
-	}
+	} 
 	return nil
 }
